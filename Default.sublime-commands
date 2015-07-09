@@ -1,0 +1,6 @@
+[
+   {
+      "caption": "Run Python Tests",
+      "command": "run_python_tests"
+   }
+]

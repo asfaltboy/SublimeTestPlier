@@ -1,0 +1,5 @@
+[
+    "name": "Python Tests",
+    "target": "python_test_runner",
+    "selector": "source.python"
+]
