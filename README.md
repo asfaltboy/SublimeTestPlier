@@ -8,7 +8,19 @@ The simplest usage is simply running the build system; `super+shift+b` and selec
 
 ## Configuration
 
-By default the command we run is `py.test -k {selection} ${file}`, but you may customize the command in your `project.sublime-project` settings. For example Django's test runner can be run like so:
+By default the command we run is `py.test {filename}::{test_class}::{test_func} -k {selection} --doctest-modules -v`. Let us look at the arguments with more detail:
+
+- `--doctest-modules - ` if no UnitTest class/method given run module unittests
+- `-v                - ` verbose test output
+
+Placeholder arguments are optional, and will be cleanly removed where possible:
+
+- `{filename}      - ` test target file
+- `{test_class}    - ` test target class
+- `{test_func}     - ` test target function/method
+- `-k {selection}  - ` use selected text as pattern
+
+You may customize the command in your `project.sublime-project` settings. For example Django's test runner can be run like so:
 
 ```json
 {
@@ -21,7 +33,7 @@ By default the command we run is `py.test -k {selection} ${file}`, but you may c
                 "manage.py",
                 "test",
                 "--noinput",
-                "${file}:{selection}",
+                "{filename}:{test_class}.{test_func}",
                 "--settings=test_settings"
             ],
             "env":
