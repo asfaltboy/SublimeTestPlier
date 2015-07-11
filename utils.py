@@ -7,7 +7,7 @@ from __future__ import print_function
 import sublime
 from .test_parser import TestParser
 
-DEBUG = True
+DEBUG = False
 
 
 def _log(*args):

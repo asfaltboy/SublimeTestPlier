@@ -6,63 +6,27 @@ class TestParser(ast.NodeVisitor):
     """
     Extract class/test which contains given line number.
 
-    Note: does not detect if line is just below class
-          but before another root entity begins.
+    Note: does not detect global location if line is below class/function
 
 
-    >>> s = '''from mymodule.tests import TestClass
-    ...
-    ...
-    ... class AnotherClass(object):
-    ...     def test_method(self):
-    ...         assert True
-    ...
-    ...
-    ... # test something
-    ...
-    ... class SomeTest(TestClass):
-    ...     class_property = True
-    ...
-    ...     def test_addition(self):
-    ...         def helper(a):
-    ...             return a + 1
-    ...
-    ...         return self.assertEqual(helper(2), 3)
-    ...
-    ...
-    ... def func_test():
-    ...     assert 1
-    ... '''
-
-    >>> parser = TestParser(source=s)
+    >>> parser = TestParser(source=open('test_fixture.py').read())
     >>> parser.parse(line=2)
     (None, None)
+
     >>> parser.parse(line=4)
     ('AnotherClass', None)
-    >>> parser.parse(line=5)
-    ('AnotherClass', 'test_method')
-    >>> parser.parse(line=7)
-    ('AnotherClass', 'test_method')
-    >>> parser.parse(line=11)
-    ('SomeTest', None)
-    >>> parser.parse(line=12)
-    ('SomeTest', None)
-    >>> parser.parse(line=13)
-    ('SomeTest', None)
-    >>> parser.parse(line=14)
-    ('SomeTest', 'test_addition')
-    >>> parser.parse(line=15)
-    ('SomeTest', 'test_addition')
-    >>> parser.parse(line=16)
-    ('SomeTest', 'test_addition')
-    >>> parser.parse(line=17)
-    ('SomeTest', 'test_addition')
-    >>> parser.parse(line=18)
-    ('SomeTest', 'test_addition')
-    >>> parser.parse(line=21)
-    (None, 'func_test')
-    >>> parser.parse(line=22)
-    (None, 'func_test')
+
+    >>> set(map(parser.parse, (5, 7)))
+    set([('AnotherClass', 'test_method')])
+
+    >>> set(map(parser.parse, (11, 12, 13)))
+    set([('SomeTest', None)])
+
+    >>> set(map(parser.parse, (14, 15, 16, 17, 18)))
+    set([('SomeTest', 'test_addition')])
+
+    >>> set(map(parser.parse, (21, 22)))
+    set([(None, 'func_test')])
 
     """
 
