@@ -42,7 +42,7 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         result = []
         for part in cmd:
             try:
-                result.append(part.format(**kwargs).strip(":"))
+                result.append(part.format(**kwargs).strip(":").strip('.'))
             except KeyError:
                 # ignore commands with unparsed parts
                 continue
