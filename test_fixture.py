@@ -3,7 +3,7 @@ from mymodule.tests import TestClass
 
 class AnotherClass(object):
     def test_method(self):
-        assert True
+        pass
 
 
  # test something
@@ -19,4 +19,20 @@ class SomeTest(TestClass):
 
 
 def func_test():
-    assert 1
+    pass
+
+
+class ParentClass(AnotherClass):
+    class ChildClass:
+        nested_property = True
+
+        def child_method(self):
+            pass
+
+    def parent_method(self):
+        pass
+
+
+class AnotherIgnoredClass(object):
+    def test_method(self):
+        pass

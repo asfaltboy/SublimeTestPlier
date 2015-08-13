@@ -61,6 +61,7 @@ def get_test(view):
     assert line, ('No line found in region: %s' % r)
     _log('Position in code -> line %s' % line)
 
-    class_name, method_name = TestParser(source, debug=DEBUG).parse(line)
+    parser = TestParser(source, debug=DEBUG, ignore_bases=['object'])
+    class_name, method_name = parser.parse(line)
     _log('Found class/name: %s/%s' % (class_name, method_name))
     return class_name, method_name
