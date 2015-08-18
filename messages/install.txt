@@ -1,0 +1,9 @@
+# Welcome to SublimePythonTestRunner
+
+Please start by reading the documentation:
+
+https://github.com/asfaltboy/SublimePythonTestRunner
+
+If you encounter a bug, or wish to suggest a new feature, please open an issue:
+
+https://github.com/asfaltboy/SublimePythonTestRunner/issues

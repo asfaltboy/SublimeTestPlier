@@ -1,6 +1,10 @@
-# SublimePythonTestRunner
+# Sublime Python Test Runner
 
 This [Sublime Text](http://www.sublimetext.com/) plugin allows python users to run tests quickly from within a project environment.
+
+### Preface
+
+Unlike [other plugins for running python tests](https://packagecontrol.io/search/test%20python), which mostly use a regex pattern to find a given test to run, SPTR parses the source [AST](test_parser.py), and locates the class/method/function whose definition contains the caret position. The found results are passed as named arguments to the test command, which can be anything (`py.test`, `nosetests`, `python manage.py` or `your-own-test-runner`).
 
 ## Usage
 
