@@ -1,5 +1,5 @@
 [
     "name": "Python Tests",
-    "target": "python_test_runner",
+    "target": "python_test_plier",
     "selector": "source.python"
 ]

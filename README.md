@@ -1,14 +1,14 @@
-# Sublime Python Test Runner
+# Sublime Test Plier
 
 This [Sublime Text](http://www.sublimetext.com/) plugin allows python users to run tests quickly from within a project environment.
 
 ### Preface
 
-Unlike [other plugins for running python tests](https://packagecontrol.io/search/test%20python), which mostly use a regex pattern to find a given test to run, SPTR parses the source [AST](test_parser.py), and locates the class/method/function whose definition contains the caret position. The found results are passed as named arguments to the test command, which can be anything (`py.test`, `nosetests`, `python manage.py` or `your-own-test-runner`).
+Unlike [other plugins for running python tests](https://packagecontrol.io/search/test%20python), which mostly use a regex pattern to find a given test to run, Sublime Test Plier parses the source [AST](test_parser.py), and locates the class/method/function whose definition contains the caret position. The found results are passed as named arguments to the test command, which can be anything (`py.test`, `nosetests`, `python manage.py` or `your-own-test-runner`).
 
 ## Usage
 
-The simplest usage is simply running the build system; `super+shift+b` and select `Python Test Runner` from the build system selection dropdown, after using it once you may hit `super+b` to run the default build system. You may also run a specified test class or function by selecting the desired test prior to running test (`{selection}` placeholder is replaced in `cmd` by the selected test).
+The simplest usage is simply running the build system; `super+shift+b` and select `Python Tests` from the build system selection drop-down, after using it once you may hit `super+b` to run the default build system. You may also run a specified test class or function by placing the caret at the desired test location prior to running test all placeholders are replaced in `cmd` by the located test and selected text.
 
 ## Configuration
 
@@ -46,7 +46,7 @@ You may customize the command in your `project.sublime-project` settings. For ex
                 "REUSE_DB": "1"
             },
             "name": "Django Test",
-            "target": "python_test_runner",
+            "target": "python_test_plier",
             "working_dir": "${project_path}/project/"
         }
     ]
