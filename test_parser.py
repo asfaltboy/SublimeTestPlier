@@ -26,7 +26,7 @@ class TestParser(ast.NodeVisitor):
     set([(None, None)])
 
     >>> parser = TestParser(source=module_source)
-    >>> parser.parse(line=2)
+    >>> parser.parse(line=1)
     (None, None)
 
     >>> parser.parse(line=4)
@@ -53,6 +53,10 @@ class TestParser(ast.NodeVisitor):
     >>> set(map(parser.parse, (32, 33)))
     set([('ParentClass', 'parent_method')])
 
+    # test first test is a func test
+    >>> parser = TestParser(source=module_source)
+    >>> parser.parse(line=2)
+    (None, 'test_first')
 
     """
     nested_class = None
@@ -60,6 +64,7 @@ class TestParser(ast.NodeVisitor):
     def __init__(self, source, debug=False, ignore_bases=None):
         self.nearest_class = None
         self.nearest_func = None
+        self.nearest_ignored = None
         self.source = source
         self.ignore_bases = ignore_bases or []
         self.debug = debug
@@ -160,6 +165,5 @@ class TestParser(ast.NodeVisitor):
         elif not self.inside_class(node) and not self.nearest_ignored:
             self._log("Function found: ", vars(node))
             self.nearest_class = None
-            self.nearest_ignored = None
             self.nearest_func = node
         return self.generic_visit(node)
