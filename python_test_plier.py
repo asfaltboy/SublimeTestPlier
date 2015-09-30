@@ -5,7 +5,7 @@ import re
 import sublime
 import sublime_plugin
 
-from .utils import get_test, _log, get_selection_content
+from SublimeTestPlier.utils import get_test, _log, get_selection_content
 
 # TODO: needs tests
 
@@ -39,7 +39,7 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
             # trim the following string in-between interpolated parts
             'sep_cleanup': '::',
         }
-        if self.ansi_installed:
+        if self.ansi_installed():
             kwargs['syntax'] = "Packages/ANSIescape/ANSI.tmLanguage"
         return kwargs
 
@@ -47,8 +47,10 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         result = []
         for part in cmd:
             try:
-                cleaned_part = part.format(**kwargs).strip(sep).strip('.')
-                result.append(re.sub('%s+' % sep, sep, cleaned_part))
+                part = part.format(**kwargs).strip(sep).strip('.')
+                cleaned_part = re.sub('%s+' % sep, sep, part)
+                if cleaned_part:
+                    result.append(cleaned_part)
             except KeyError:
                 # ignore commands with unparsed parts
                 continue
@@ -59,7 +61,8 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         pattern = view and get_test(view)
         _log('Test pattern: ', pattern)
         if not pattern:
-            return None
+            self.class_name = self.func_name = None
+            return
         self.class_name, self.func_name = pattern
 
     def run(self, *args, **command_kwargs):
@@ -86,6 +89,6 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
 
         _log("Built command: ", kwargs)
 
-        if self.ansi_installed:
+        if self.ansi_installed():
             return self.window.run_command("ansi_color_build", kwargs)
         return self.window.run_command("exec", kwargs)

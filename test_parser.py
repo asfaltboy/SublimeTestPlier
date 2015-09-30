@@ -70,9 +70,6 @@ class TestParser(ast.NodeVisitor):
     nested_class = None
 
     def __init__(self, source, debug=False, ignore_bases=None):
-        self.nearest_class = None
-        self.nearest_func = None
-        self.nearest_ignored = None
         self.source = source
         self.ignore_bases = ignore_bases or []
         self.debug = debug
@@ -85,6 +82,9 @@ class TestParser(ast.NodeVisitor):
         print(*args)
 
     def parse(self, line):
+        self.nearest_class = None
+        self.nearest_func = None
+        self.nearest_ignored = None
         self.lineno = line
         tree = ast.parse(self.source)
         self.visit(tree)
@@ -101,16 +101,26 @@ class TestParser(ast.NodeVisitor):
             return True
 
     def ignore_class(self, node):
-        return (
-            hasattr(node, 'bases')
-            and any(map(lambda b: b.id in self.ignore_bases, node.bases))
-        )
+        if not hasattr(node, 'bases'):
+            self._log("Class %s has no bases (not a class?)" % node)
+            return False
+        self._log("Ignore if bases %s are in %s" %
+                  (node.bases, self.ignore_bases))
+
+        def should_ignore(base):
+            if hasattr(base, 'id'):
+                return base.id in self.ignore_bases
+            elif hasattr(base, 'attr'):
+                return base.attr in self.ignore_bases
+            raise Exception('Unknown base node %s' % base)
+        return any(map(should_ignore, node.bases))
 
     def inside_class(self, node):
         """
         Test whether node is inside a class definition.
         Test ignores classes whose base is in self.ignore_bases.
         """
+        self._log("Testing if node %s is inside a class" % node)
         return (
             # verify none of the bases are in ignored bases
             not self.ignore_class(node)
