@@ -5,7 +5,7 @@ import re
 import sublime
 import sublime_plugin
 
-from SublimeTestPlier.utils import get_test, _log, get_selection_content
+from .utils import get_test, _log, get_selection_content
 
 # TODO: needs tests
 

@@ -1,8 +1,13 @@
-install:
-    - pip install pytest
+language: python
+
+python: "3.3.6"
+
+before_install: export PYTHONPATH=$TRAVIS_BUILD_DIR
+
+install: pip install pytest==2.8.1
 
 script:
-    - sh run_tests.sh
+    - PYTHONPATH=$TRAVIS_BUILD_DIR py.test tests test_parser.py --doctest-modules --doctest-ignore-import-errors
 
 notifications:
     email: false

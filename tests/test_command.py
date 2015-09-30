@@ -1,19 +1,15 @@
 from unittest import TestCase, mock
-import sys
-sys.path.extend([".."])
 
+from ..python_test_plier import RunPythonTestsCommand
+from .. import utils
 from .sublime_mock import sublime, known_commands
 
-
-import python_test_plier
-import SublimeTestPlier.utils
-
-mock.patch.object(SublimeTestPlier.utils, 'DEBUG', True).start()
+mock.patch.object(utils, 'DEBUG', True).start()
 
 exec_cmd = mock.Mock()
 ansi_cmd = mock.Mock()
 
-known_commands['run_python_tests'] = python_test_plier.RunPythonTestsCommand
+known_commands['run_python_tests'] = RunPythonTestsCommand
 known_commands['ansi_color_build'] = ansi_cmd
 known_commands['exec'] = exec_cmd
 
