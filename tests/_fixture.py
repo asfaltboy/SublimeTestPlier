@@ -36,3 +36,16 @@ class ParentClass(AnotherClass):
 class AnotherIgnoredClass(object):
     def test_method(self):
         pass
+
+
+@test_first
+class DecoratedTestClass(TestClass):
+
+    @test_first
+    def test_me(self):
+        pass
+
+
+class ParentInModuleClass(mymodule.TestClass):
+    def test_me(self):
+        pass

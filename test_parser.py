@@ -14,16 +14,18 @@ class TestParser(ast.NodeVisitor):
     Note: currently if row is below last class/function and unindented it is
           still considered inside the last detected class/function.
 
-    >>> module_source = open('test_fixture.py').read()
+    >>> from os import path
+    >>> TEST_DIR = path.join(path.abspath(path.dirname(__file__)), 'tests')
+    >>> module_source = open(path.join(TEST_DIR, '_fixture.py')).read()
     >>> parser = TestParser(source=module_source, ignore_bases=['object'])
     >>> parser.parse(line=4)
     (None, None)
 
-    >>> set(map(parser.parse, (5, 7)))
-    set([(None, None)])
+    >>> list(set(map(parser.parse, (5, 7))))
+    [(None, None)]
 
-    >>> set(map(parser.parse, (36, 37, 38)))
-    set([(None, None)])
+    >>> list(set(map(parser.parse, (36, 37, 38))))
+    [(None, None)]
 
     >>> parser = TestParser(source=module_source)
     >>> parser.parse(line=1)
@@ -32,32 +34,38 @@ class TestParser(ast.NodeVisitor):
     >>> parser.parse(line=4)
     ('AnotherClass', None)
 
-    >>> set(map(parser.parse, (5, 7)))
-    set([('AnotherClass', 'test_method')])
+    >>> list(set(map(parser.parse, (5, 7))))
+    [('AnotherClass', 'test_method')]
 
-    >>> set(map(parser.parse, (11, 12, 13)))
-    set([('SomeTest', None)])
+    >>> list(set(map(parser.parse, (11, 12, 13))))
+    [('SomeTest', None)]
 
-    >>> set(map(parser.parse, (14, 15, 16, 17, 18)))
-    set([('SomeTest', 'test_addition')])
+    >>> list(set(map(parser.parse, (14, 15, 16, 17, 18))))
+    [('SomeTest', 'test_addition')]
 
-    >>> set(map(parser.parse, (21, 22)))
-    set([(None, 'func_test')])
+    >>> list(set(map(parser.parse, (21, 22))))
+    [(None, 'func_test')]
 
-    >>> set(map(parser.parse, (25, 26, 27, 28, 31)))
-    set([('ParentClass', None)])
+    >>> list(set(map(parser.parse, (25, 26, 27, 28, 31))))
+    [('ParentClass', None)]
 
-    >>> set(map(parser.parse, (29, 30)))
-    set([('ParentClass', None)])
+    >>> list(set(map(parser.parse, (29, 30))))
+    [('ParentClass', None)]
 
-    >>> set(map(parser.parse, (32, 33)))
-    set([('ParentClass', 'parent_method')])
+    >>> list(set(map(parser.parse, (32, 33))))
+    [('ParentClass', 'parent_method')]
+
+    # test decorated test case and decorated method
+    >>> list(set(map(parser.parse, range(41, 44))))
+    [('DecoratedTestClass', None)]
+
+    >>> list(set(map(parser.parse, range(44, 47))))
+    [('DecoratedTestClass', 'test_me')]
 
     # test first test is a func test
     >>> parser = TestParser(source=module_source)
     >>> parser.parse(line=2)
     (None, 'test_first')
-
     """
     nested_class = None
 

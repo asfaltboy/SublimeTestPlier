@@ -1,5 +1,7 @@
 # Sublime Test Plier
 
+[![Build Status](https://travis-ci.org/asfaltboy/Sublime-Test-Plier.svg?branch=develop)](https://travis-ci.org/asfaltboy/Sublime-Test-Plier)
+
 This [Sublime Text](http://www.sublimetext.com/) plugin allows python users to run tests quickly from within a project environment.
 
 ### Preface

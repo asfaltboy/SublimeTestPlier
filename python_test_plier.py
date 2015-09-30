@@ -27,11 +27,11 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
 
         self.packages = os.listdir(self.window.extract_variables().get(
             'packages'))
-        _log("Packages: %s" % self.packages)
+        _log("Packages: ", self.packages)
 
         # get current filename
         self.filename = self.window.active_view().file_name()
-        _log("Filename: %s" % self.filename)
+        _log("Filename: ", self.filename)
 
     def _get_default_kwargs(self):
         kwargs = {

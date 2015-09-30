@@ -1,0 +1,8 @@
+install:
+    - pip install pytest
+
+script:
+    - sh run_tests.sh
+
+notifications:
+    email: false
