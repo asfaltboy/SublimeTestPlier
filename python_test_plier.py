@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 import os
+import re
 
 import sublime
 import sublime_plugin
 
 from .utils import get_test, _log, get_selection_content
+
+# TODO: needs tests
 
 
 class PythonTestRunnerCommand(sublime_plugin.WindowCommand):
@@ -32,17 +35,20 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
 
     def _get_default_kwargs(self):
         kwargs = {
-            'cmd': self.default_cmd
+            'cmd': self.default_cmd,
+            # trim the following string in-between interpolated parts
+            'sep_cleanup': '::',
         }
         if self.ansi_installed:
             kwargs['syntax'] = "Packages/ANSIescape/ANSI.tmLanguage"
         return kwargs
 
-    def _format_placeholder(self, cmd, **kwargs):
+    def _format_placeholder(self, cmd, sep, **kwargs):
         result = []
         for part in cmd:
             try:
-                result.append(part.format(**kwargs).strip(":").strip('.'))
+                cleaned_part = part.format(**kwargs).strip(sep).strip('.')
+                result.append(re.sub('%s+' % sep, sep, cleaned_part))
             except KeyError:
                 # ignore commands with unparsed parts
                 continue
@@ -67,15 +73,16 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         view = self.window.active_view()
         self.get_pattern(view)
         fmt_args = dict(
+            filename=self.filename or '',
             test_class=self.class_name or '',
             test_func=self.func_name or '',
-            filename=self.filename or '',
         )
         selection = get_selection_content(view)
         if selection:
             fmt_args['selection'] = selection
 
-        kwargs['cmd'] = self._format_placeholder(kwargs['cmd'], **fmt_args)
+        kwargs['cmd'] = self._format_placeholder(
+            kwargs['cmd'], kwargs.pop('sep_cleanup'), **fmt_args)
 
         _log("Built command: ", kwargs)
 
