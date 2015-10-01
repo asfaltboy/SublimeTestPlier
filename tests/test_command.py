@@ -1,8 +1,8 @@
 from unittest import TestCase, mock
 
+from .sublime_mock import sublime, known_commands
 from ..python_test_plier import RunPythonTestsCommand
 from .. import utils
-from .sublime_mock import sublime, known_commands
 
 mock.patch.object(utils, 'DEBUG', True).start()
 

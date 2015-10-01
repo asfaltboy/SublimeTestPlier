@@ -54,7 +54,8 @@ def get_test(view):
     and returns selected/containing test class/method.
     """
     r = get_first_selection(view)
-    if not r:
+    if r is None:
+        _log("No selection found: ", r)
         return
 
     # try to detect if r is inside class/method
