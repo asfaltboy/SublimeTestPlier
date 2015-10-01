@@ -16,7 +16,7 @@ known_commands = {
 }
 
 
-def run_command(name, *args):
+def run_command(name, *args, **kwargs):
     assert name in known_commands, (
         '%s command not found. You need to import packages you need for your '
         'tests (or Mock them) and add them to `sublime_mock.known_commands`'
@@ -24,9 +24,9 @@ def run_command(name, *args):
     cmd = known_commands[name]
     if isinstance(cmd, type):
         print("Running command ", name, cmd.run)
-        return cmd().run(*args)
+        return cmd().run(*args, **kwargs)
     print("Running function ", name, cmd)
-    return cmd(*args)
+    return cmd(*args, **kwargs)
 
 
 def settings_loader(settings_file):

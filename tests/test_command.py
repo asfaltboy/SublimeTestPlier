@@ -25,7 +25,7 @@ class TestCase(unittest.TestCase):
 DEFAULT_CMD_ARGS = ['--doctest-modules', '--doctest-ignore-import-errors', '-v']
 
 
-class test_helloworld_command(TestCase):
+class TestPlierCommand(TestCase):
     def setUp(self):
         self.selection = []
         self.window = sublime.active_window()
@@ -37,6 +37,10 @@ class test_helloworld_command(TestCase):
         self.view.file_name = mock.Mock(return_value='file.py')
         self.setText(TEST_CONTENT)
         self.view.substr.return_value = self.mock_selection(0, 0)
+        self.custom_kwargs = dict(
+            cmd=["nosetests", "-k {filename}:{test_class}.{test_func}"],
+            sep_cleanup=':'
+        )
 
     def tearDown(self):
         exec_cmd.reset_mock()
@@ -84,3 +88,15 @@ class test_helloworld_command(TestCase):
         self.view.run_command("run_python_tests")
         exec_cmd.assert_called_once_with(dict(
             cmd=['py.test', 'file.py::TestCase', ] + DEFAULT_CMD_ARGS))
+
+    def test_custom_cmd_with_cursor(self):
+        self.view.substr.return_value = self.mock_selection(2, 2)
+        self.view.run_command("run_python_tests", **self.custom_kwargs)
+        exec_cmd.assert_called_once_with(dict(
+            cmd=['nosetests', '-k file.py:TestCase.test_fail', ]))
+
+    def test_custom_cmd_without_file(self):
+        self.view.file_name.return_value = ''
+        self.view.run_command("run_python_tests", **self.custom_kwargs)
+        exec_cmd.assert_called_once_with(dict(
+            cmd=['nosetests', '-k ']))

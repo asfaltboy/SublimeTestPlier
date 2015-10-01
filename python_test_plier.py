@@ -48,7 +48,7 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         for part in cmd:
             try:
                 part = part.format(**kwargs).strip(sep).strip('.')
-                cleaned_part = re.sub('%s+' % sep, sep, part)
+                cleaned_part = re.sub('%s+' % sep, sep, part).strip(sep)
                 if cleaned_part:
                     result.append(cleaned_part)
             except KeyError:
