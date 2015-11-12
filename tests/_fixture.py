@@ -1,6 +1,6 @@
 from mymodule.tests import TestClass
-
-
+def test_first():
+    pass
 class AnotherClass(object):
     def test_method(self):
         pass
@@ -35,4 +35,17 @@ class ParentClass(AnotherClass):
 
 class AnotherIgnoredClass(object):
     def test_method(self):
+        pass
+
+
+@test_first
+class DecoratedTestClass(TestClass):
+
+    @test_first
+    def test_me(self):
+        pass
+
+
+class ParentInModuleClass(mymodule.TestClass):
+    def test_me(self):
         pass

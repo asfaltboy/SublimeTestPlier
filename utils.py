@@ -42,6 +42,7 @@ def get_selection_content(view):
     # return selected region as string if non-empty
     r = get_first_selection(view)
     selected_string = view.substr(r)
+    _log("selected string: ", selected_string)
     if selected_string.strip():
         _log("Selection: %s (%s)" % (selected_string, r))
         return selected_string
@@ -53,9 +54,13 @@ def get_test(view):
     and returns selected/containing test class/method.
     """
     r = get_first_selection(view)
+    if r is None:
+        _log("No selection found: ", r)
+        return
 
     # try to detect if r is inside class/method
     source = view.substr(sublime.Region(0, view.size()))
+    _log("source is: ", source)
     line, col = view.rowcol(int(r.a))
     line = line + 1
     assert line, ('No line found in region: %s' % r)

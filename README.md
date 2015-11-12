@@ -1,5 +1,7 @@
 # Sublime Test Plier
 
+[![Build Status](https://travis-ci.org/asfaltboy/Sublime-Test-Plier.svg?branch=develop)](https://travis-ci.org/asfaltboy/Sublime-Test-Plier)
+
 This [Sublime Text](http://www.sublimetext.com/) plugin allows python users to run tests quickly from within a project environment.
 
 ### Preface
@@ -46,7 +48,7 @@ You may customize the command in your `project.sublime-project` settings. For ex
                 "REUSE_DB": "1"
             },
             "name": "Django Test",
-            "target": "python_test_plier",
+            "target": "run_python_tests",
             "working_dir": "${project_path}/project/"
         }
     ]

@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 import os
+import re
 
 import sublime
 import sublime_plugin
 
 from .utils import get_test, _log, get_selection_content
+
+# TODO: needs tests
 
 
 class PythonTestRunnerCommand(sublime_plugin.WindowCommand):
@@ -24,25 +27,30 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
 
         self.packages = os.listdir(self.window.extract_variables().get(
             'packages'))
-        _log("Packages: %s" % self.packages)
+        _log("Packages: ", self.packages)
 
         # get current filename
         self.filename = self.window.active_view().file_name()
-        _log("Filename: %s" % self.filename)
+        _log("Filename: ", self.filename)
 
     def _get_default_kwargs(self):
         kwargs = {
-            'cmd': self.default_cmd
+            'cmd': self.default_cmd,
+            # trim the following string in-between interpolated parts
+            'sep_cleanup': '::',
         }
-        if self.ansi_installed:
+        if self.ansi_installed():
             kwargs['syntax'] = "Packages/ANSIescape/ANSI.tmLanguage"
         return kwargs
 
-    def _format_placeholder(self, cmd, **kwargs):
+    def _format_placeholder(self, cmd, sep, **kwargs):
         result = []
         for part in cmd:
             try:
-                result.append(part.format(**kwargs).strip(":").strip('.'))
+                part = part.format(**kwargs).strip(sep).strip('.')
+                cleaned_part = re.sub('%s+' % sep, sep, part).strip(sep)
+                if cleaned_part:
+                    result.append(cleaned_part)
             except KeyError:
                 # ignore commands with unparsed parts
                 continue
@@ -53,7 +61,8 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         pattern = view and get_test(view)
         _log('Test pattern: ', pattern)
         if not pattern:
-            return None
+            self.class_name = self.func_name = None
+            return
         self.class_name, self.func_name = pattern
 
     def run(self, *args, **command_kwargs):
@@ -67,18 +76,19 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         view = self.window.active_view()
         self.get_pattern(view)
         fmt_args = dict(
+            filename=self.filename or '',
             test_class=self.class_name or '',
             test_func=self.func_name or '',
-            filename=self.filename or '',
         )
         selection = get_selection_content(view)
         if selection:
             fmt_args['selection'] = selection
 
-        kwargs['cmd'] = self._format_placeholder(kwargs['cmd'], **fmt_args)
+        kwargs['cmd'] = self._format_placeholder(
+            kwargs['cmd'], kwargs.pop('sep_cleanup'), **fmt_args)
 
         _log("Built command: ", kwargs)
 
-        if self.ansi_installed:
+        if self.ansi_installed():
             return self.window.run_command("ansi_color_build", kwargs)
         return self.window.run_command("exec", kwargs)
