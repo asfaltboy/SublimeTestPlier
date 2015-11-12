@@ -1,0 +1,14 @@
+Changes since 1.0.0:
+
+  Bugs:
+   - properly strip separators with no match
+   - remove repeating (count > 1) sequence of separator
+   - properly assert selection
+   - use correct command in target
+   - add default value for nearest_ignored
+
+  Other:
+   - Fix travis runner
+
+  Tests:
+   - add and automate testing of SublimeTestPlier

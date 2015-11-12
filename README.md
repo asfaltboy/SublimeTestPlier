@@ -48,7 +48,7 @@ You may customize the command in your `project.sublime-project` settings. For ex
                 "REUSE_DB": "1"
             },
             "name": "Django Test",
-            "target": "python_test_plier",
+            "target": "run_python_tests",
             "working_dir": "${project_path}/project/"
         }
     ]
