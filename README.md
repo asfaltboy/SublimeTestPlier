@@ -57,6 +57,20 @@ You may customize the command in your `project.sublime-project` settings. For ex
 
 For more info on the SublimeText build-system configuration see [the unofficial documentation](http://sublime-text-unofficial-documentation.readthedocs.org/en/latest/reference/build_systems/configuration.html).
 
+
+### Launching an external runner
+
+By default the test command is passed to SublimeText's built-in `exec` command which, by default, outputs and results in a build results panel in the editor.
+
+In most cases this is sufficient; however, occasionally an external terminal window is preferred, most often when user input is required (e.g pdb entered), this is possible by setting an external runner.
+
+If RunPythonTestsCommand.external_runner is set (e.g in a subclass), or the build system kwargs contains an "external" property, the given command list/array is executed.
+
+The existing command kwargs are parsed into a "shell-friendly" command that
+is passed as space delimited arguments to this "external" command.
+
+- _TODO_: add an example - how I do it to launch test in an iTerm2 session.
+
 ## Sublime ANSI
 
 This plugin supports passing the command through [ANSIescape](https://github.com/aziz/SublimeANSI) to display ANSI colors in the ST output panel. This will be automatically activated if the plugin is installed.

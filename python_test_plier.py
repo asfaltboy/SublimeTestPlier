@@ -16,6 +16,8 @@ class PythonTestRunnerCommand(sublime_plugin.WindowCommand):
 
 
 class RunPythonTestsCommand(sublime_plugin.WindowCommand):
+    external_runner = None
+
     def ansi_installed(self):
         return 'sublimeansi' in list(map(str.lower, self.packages))
 
@@ -89,6 +91,19 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
 
         _log("Built command: ", kwargs)
 
-        if self.ansi_installed():
+        if kwargs.get('external') or self.external_runner:
+            _env = ' '.join('%s=%s' % (ename, evalue) for
+                            ename, evalue in kwargs['env'].items())
+            _cmd = 'cd {path} && {env_setup} {cmd}'.format(
+                path=kwargs['working_dir'],
+                cmd=' '.join(kwargs['cmd']),
+                env_setup=_env,
+            )
+            cmd = (kwargs['external'] or self.external_runner) + [_cmd]
+            kwargs['cmd'] = cmd
+            _log('Running external runner with cmd: %s' % kwargs)
+            return self.window.run_command("exec", {'cmd': cmd})
+        elif self.ansi_installed():
             return self.window.run_command("ansi_color_build", kwargs)
-        return self.window.run_command("exec", kwargs)
+        else:
+            return self.window.run_command("exec", kwargs)
