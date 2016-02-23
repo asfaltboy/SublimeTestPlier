@@ -20,7 +20,7 @@ Unlike [other plugins for running python tests](https://packagecontrol.io/search
 
 The simplest usage is simply running the build system; `super+shift+b` and select `Python Tests` from the build system selection drop-down, after using it once you may hit `super+b` to run the default build system. You may also run a specified test class or function by placing the caret at the desired test location prior to running test all placeholders are replaced in `cmd` by the located test and selected text.
 
-NOTE: Due to some (uninvestigated) bug the default build system is currently unavailable (see issue #2).
+NOTE: Due to some (uninvestigated) bug the default build system is currently unavailable ( see issue #2 ).
 
 ## Configuration
 
