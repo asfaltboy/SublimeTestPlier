@@ -1,8 +1,16 @@
 # Sublime Test Plier
 
-[![Build Status](https://travis-ci.org/asfaltboy/Sublime-Test-Plier.svg?branch=develop)](https://travis-ci.org/asfaltboy/Sublime-Test-Plier)
+| Master | Develop |
+| ------ |-------- |
+| [![Build Status][2]][1] | [![Build Status][3]][1] |
 
-This [Sublime Text](http://www.sublimetext.com/) plugin allows python users to run tests quickly from within a project environment.
+  [1]: https://travis-ci.org/asfaltboy/SublimeTestPlier
+  [2]: https://travis-ci.org/asfaltboy/SublimeTestPlier.svg?branch=master
+  [3]: https://travis-ci.org/asfaltboy/SublimeTestPlier.svg?branch=develop
+
+
+
+This [Sublime Text 3 (only)](http://www.sublimetext.com/3) plugin allows python users to run tests quickly from within a project environment.
 
 ### Preface
 
@@ -11,6 +19,8 @@ Unlike [other plugins for running python tests](https://packagecontrol.io/search
 ## Usage
 
 The simplest usage is simply running the build system; `super+shift+b` and select `Python Tests` from the build system selection drop-down, after using it once you may hit `super+b` to run the default build system. You may also run a specified test class or function by placing the caret at the desired test location prior to running test all placeholders are replaced in `cmd` by the located test and selected text.
+
+NOTE: Due to some (uninvestigated) bug the default build system is currently unavailable (see issue #2).
 
 ## Configuration
 
@@ -71,7 +81,7 @@ is passed as space delimited arguments to this "external" command.
 
 - _TODO_: add an example - how I do it to launch test in an iTerm2 session.
 
+
 ## Sublime ANSI
 
-This plugin supports passing the command through [ANSIescape](https://github.com/aziz/SublimeANSI) to display ANSI colors in the ST output panel. This will be automatically activated if the plugin is installed.
-
+This plugin supports passing the command through [SublimeANSI](https://github.com/aziz/SublimeANSI) to display ANSI colors in the ST output panel. This will be automatically activated if the plugin is installed.
