@@ -10,16 +10,15 @@ from .test_parser import TestParser
 DEBUG = False
 
 
-def _log(*args):
+def _log(*args, **kwargs):
     """
-    >>> DEBUG = False
-    >>> _log("Test")
+    >>> _log("Test", debug=False)
 
     >>> DEBUG = True
     >>> _log("Test")
     Test
     """
-    if not DEBUG:
+    if not kwargs.get('debug', DEBUG):
         return
     print(*args)
 
