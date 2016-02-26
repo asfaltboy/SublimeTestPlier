@@ -2,6 +2,7 @@ Changes since 1.1.0 (ee7d71b):
 
   Feature:
    - allow flexible external launching of test
+   - allow passing extra arguments to cmd
 
   Tests/Docs:
    - use python 3.3 on travis and send notifications
