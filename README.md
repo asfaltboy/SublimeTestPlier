@@ -92,7 +92,8 @@ We welcome any and all contributions. For stuff that I'd like to see done first 
 
 ### _Things on our TODO list_
 
-- [ ] add an example for external test - how I do it to launch test in an iTerm2 session.
+- [ ] document all arguments the command accepts
+- [ ] add an example for external test - how I use it to launch test in an iTerm2 session.
 
 [1]: https://travis-ci.org/asfaltboy/SublimeTestPlier
 [2]: https://travis-ci.org/asfaltboy/SublimeTestPlier.svg?branch=master

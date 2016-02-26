@@ -1,3 +1,4 @@
 {
-	"default_cmd": ["py.test", "{filename}::{test_class}::{test_func}", "-k {selection}", "--doctest-modules", "--doctest-ignore-import-errors", "-v"]
+	"default_cmd": ["py.test", "{filename}::{test_class}::{test_func}", "-k {selection}",
+				    "--doctest-modules", "--doctest-ignore-import-errors", "-v"]
 }
