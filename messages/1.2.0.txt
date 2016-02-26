@@ -1,0 +1,13 @@
+Changes since 1.1.0 (ee7d71b):
+
+  Feature:
+   - allow flexible external launching of test
+
+  Tests/Docs:
+   - use python 3.3 on travis and send notifications
+   - correct travis badge urls and misc other changes
+   - move py.test arguments to pytest.ini
+   - move reqs from travis to requirement.txt
+
+  Contributors:
+   - Pavel Savchenko
