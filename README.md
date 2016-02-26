@@ -4,27 +4,40 @@
 | ------ |-------- |
 | [![Build Status][2]][1] | [![Build Status][3]][1] |
 
-  [1]: https://travis-ci.org/asfaltboy/SublimeTestPlier
-  [2]: https://travis-ci.org/asfaltboy/SublimeTestPlier.svg?branch=master
-  [3]: https://travis-ci.org/asfaltboy/SublimeTestPlier.svg?branch=develop
+This [Sublime Text 3 (only)][4] plugin allows python developers to run (a single or  more) tests quickly from within a project environment.
 
 
-
-This [Sublime Text 3 (only)](http://www.sublimetext.com/3) plugin allows python users to run tests quickly from within a project environment.
 
 ### Preface
 
-Unlike [other plugins for running python tests](https://packagecontrol.io/search/test%20python), which mostly use a regex pattern to find a given test to run, Sublime Test Plier parses the source [AST](test_parser.py), and locates the class/method/function whose definition contains the caret position. The found results are passed as named arguments to the test command, which can be anything (`py.test`, `nosetests`, `python manage.py` or `your-own-test-runner`).
+Unlike [other plugins for running python tests][5], which mostly use a regex pattern to find a given test to run, Sublime Test Plier parses the source [AST][6], and locates the class/method/function whose definition contains the caret position. The found results are passed as named arguments to the test command, which can be anything (`py.test`, `nosetests`, `python manage.py` or `your-own-test-runner`).
+
 
 ## Usage
 
-The simplest usage is simply running the build system; `super+shift+b` and select `Python Tests` from the build system selection drop-down, after using it once you may hit `super+b` to run the default build system. You may also run a specified test class or function by placing the caret at the desired test location prior to running test all placeholders are replaced in `cmd` by the located test and selected text.
+The simplest usage is simply running the build system; <kbd>ctrl+shift+b</kbd> (<kbd>super+shift+b</kbd> on OSX) and select `Run Python Tests` from the build system selection drop-down, after using it once you may hit <kbd>ctrl+b</kbd> (<kbd>super+b</kbd> on OSX) to run the build system again.
 
-NOTE: Due to some (uninvestigated) bug the default build system is currently unavailable ( see issue #2 ).
+_Note: this works by running py.test found using SublimeText's environment, which will work for the simplest of cases, but for most projects you will want to configure the test environment; for more details on this see [configuration section](#configuration) below._
+
+### Run a specific test
+
+This is the main reason for using Test Plier: you can use it to run a specified test module, class or function by placing the caret at the desired test location prior to running test all placeholders are replaced in `cmd` by the located test and selected text.
+
+### Launching an external runner
+
+By default the test command is passed to SublimeText's built-in `exec` command which, by default, outputs test results to a build results panel in the editor.
+
+In most cases this is sufficient; however, occasionally an external terminal window is preferred, most often when user input is required (e.g pdb entered), this is possible by setting an external runner.
+
+If `RunPythonTestsCommand.external_runner` is set (e.g in a subclass), or the build system kwargs contains an "external" property, the given command list/array is executed.
+
+The existing command kwargs are parsed into a "shell-friendly" command that is passed as space delimited arguments to this "external" command.
+
 
 ## Configuration
 
-By default the command we run is `py.test {filename}::{test_class}::{test_func} -k {selection} --doctest-modules -v`. Let us look at the arguments with more detail:
+By default the command we run is `py.test {filename}::{test_class}::{test_func} -k {selection} --doctest-modules -v`.
+Let us look at the substitute arguments with more detail:
 
 - `--doctest-modules - ` if no UnitTest class/method given run module unittests
 - `-v                - ` verbose test output
@@ -36,7 +49,8 @@ Placeholder arguments are optional, and will be cleanly removed where possible:
 - `{test_func}     - ` test target function/method
 - `-k {selection}  - ` use selected text as pattern
 
-You may customize the command in your `project.sublime-project` settings. For example Django's test runner can be run like so:
+You may customize the command and any of it's parameters (all optional) in your `project.sublime-project` settings.
+For example Django's test runner can be run like so:
 
 ```json
 {
@@ -65,23 +79,26 @@ You may customize the command in your `project.sublime-project` settings. For ex
 }
 ```
 
-For more info on the SublimeText build-system configuration see [the unofficial documentation](http://sublime-text-unofficial-documentation.readthedocs.org/en/latest/reference/build_systems/configuration.html).
-
-
-### Launching an external runner
-
-By default the test command is passed to SublimeText's built-in `exec` command which, by default, outputs and results in a build results panel in the editor.
-
-In most cases this is sufficient; however, occasionally an external terminal window is preferred, most often when user input is required (e.g pdb entered), this is possible by setting an external runner.
-
-If RunPythonTestsCommand.external_runner is set (e.g in a subclass), or the build system kwargs contains an "external" property, the given command list/array is executed.
-
-The existing command kwargs are parsed into a "shell-friendly" command that
-is passed as space delimited arguments to this "external" command.
-
-- _TODO_: add an example - how I do it to launch test in an iTerm2 session.
+For more info on the SublimeText build-system configuration see [the unofficial documentation][7].
 
 
 ## Sublime ANSI
 
-This plugin supports passing the command through [SublimeANSI](https://github.com/aziz/SublimeANSI) to display ANSI colors in the ST output panel. This will be automatically activated if the plugin is installed.
+This plugin supports passing the command through [SublimeANSI][8] to display ANSI colors in the ST output panel. This will be automatically activated if the plugin is installed.
+
+## Contributing
+
+We welcome any and all contributions. For stuff that I'd like to see done first see below:
+
+### _Things on our TODO list_
+
+- [ ] add an example for external test - how I do it to launch test in an iTerm2 session.
+
+[1]: https://travis-ci.org/asfaltboy/SublimeTestPlier
+[2]: https://travis-ci.org/asfaltboy/SublimeTestPlier.svg?branch=master
+[3]: https://travis-ci.org/asfaltboy/SublimeTestPlier.svg?branch=develop
+[4]: http://www.sublimetext.com/3
+[5]: https://packagecontrol.io/search/test+python
+[6]: test_parser.py
+[7]: http://sublime-text-unofficial-documentation.readthedocs.org/en/latest/reference/build_systems/configuration.html
+[8]: https://github.com/aziz/SublimeANSI
