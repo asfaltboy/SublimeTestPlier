@@ -5,4 +5,4 @@ python: "3.3"
 before_install: export PYTHONPATH=$TRAVIS_BUILD_DIR
 
 script:
-    - py.test tests test_parser.py --doctest-modules --doctest-ignore-import-errors
+    - py.test
