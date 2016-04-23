@@ -15,7 +15,7 @@ Unlike [other plugins for running python tests][5], which mostly use a regex pat
 
 ## Usage
 
-The simplest usage is simply running the build system; <kbd>ctrl+shift+b</kbd> (<kbd>super+shift+b</kbd> on OSX) and select **test_plier - Python Tests** from the build system selection drop-down, after using it once you may hit <kbd>ctrl+b</kbd> (<kbd>super+b</kbd> on OSX) to run the build system again. Alternatively, select **test_plier - Python Tests (external)** to run the test in [an external terminal window](#launching-an-external-terminal-window).
+The simplest usage is simply running the build system; <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>b</kbd> (<kbd>super</kbd>+<kbd>shift</kbd>+<kbd>b</kbd> on OSX) and select **test_plier - Python Tests** from the build system selection drop-down, after using it once you may hit <kbd>ctrl</kbd>+<kbd>b</kbd> (<kbd>super</kbd>+<kbd>b</kbd> on OSX) to run the build system again. Alternatively, select **test_plier - Python Tests (external)** to run the test in [an external terminal window](#launching-an-external-terminal-window).
 
 _Note: this works by running py.test found using SublimeText's environment, which will work for the simplest of cases, but for most projects you will want to configure the test environment; for more details on this see [configuration section](#configuration) below._
 
