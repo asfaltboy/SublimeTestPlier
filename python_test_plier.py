@@ -90,6 +90,12 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         kwargs['cmd'] = self._format_placeholder(
             kwargs['cmd'], kwargs.pop('sep_cleanup'), **fmt_args)
 
+        # TODO: infer from settings.python_interpreter and settings.src_root settings
+        #       as used in https://github.com/JulianEberius/SublimePythonIDE
+        if 'env' not in kwargs:
+            kwargs['env'] = {}
+        if 'working_dir' not in kwargs:
+            kwargs['working_dir'] = ''
         _log("Built command: ", kwargs)
 
         if kwargs.get('external') or self.external_runner:

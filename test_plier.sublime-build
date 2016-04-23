@@ -1,5 +1,10 @@
-[
-    "name": "Python Tests",
-    "target": "run_python_tests",
-    "selector": "source.python"
-]
+{
+    "selector": "source.python",
+    "target": "python_test_runner",
+    "env": {},
+    "variants": [
+        {
+                "name": "Python Tests"
+        {
+    ]
+}
