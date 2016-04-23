@@ -5,7 +5,8 @@ and returning a test class/method name.
 from __future__ import print_function
 
 import sublime
-from .test_parser import TestParser
+
+from ..test_parser import TestParser
 
 DEBUG = False
 

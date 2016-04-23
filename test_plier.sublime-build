@@ -5,6 +5,10 @@
     "variants": [
         {
                 "name": "Python Tests"
+        },
         {
+            "name": "python tests (external)",
+            "external": true
+        }
     ]
 }

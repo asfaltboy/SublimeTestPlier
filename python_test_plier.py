@@ -9,6 +9,9 @@ from .utils import get_test, _log, get_selection_content
 
 # TODO: needs tests
 
+CUR_DIR = os.path.abspath(os.path.dirname(__file__))
+DEFAULT_EXTERNAL = ["python", os.path.join(CUR_DIR, 'utils', 'run_externally.py')]
+
 
 class PythonTestRunnerCommand(sublime_plugin.WindowCommand):
     def run(self, *args, **kwargs):
@@ -98,7 +101,18 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
             kwargs['working_dir'] = ''
         _log("Built command: ", kwargs)
 
-        if kwargs.get('external') or self.external_runner:
+        external = kwargs.get('external') or self.external_runner
+        if external:
+
+            if isinstance(external, bool):
+                # if "external": true, use our default
+                base_command = DEFAULT_EXTERNAL
+            elif isinstance(external, (list, tuple)):
+                base_command = external
+            else:
+                raise Exception("External command must be either true/false"
+                                " or a list of arguments")
+
             _env = ' '.join('%s=%s' % (ename, evalue) for
                             ename, evalue in kwargs['env'].items())
             _cmd = 'cd {path} && {env_setup} {cmd}'.format(
@@ -106,7 +120,7 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
                 cmd=' '.join(kwargs['cmd']),
                 env_setup=_env,
             )
-            cmd = (kwargs['external'] or self.external_runner) + [_cmd]
+            cmd = (base_command) + [_cmd]
             kwargs['cmd'] = cmd
             _log('Running external runner with cmd: %s' % kwargs)
             return self.window.run_command("exec", {'cmd': cmd})
