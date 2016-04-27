@@ -76,8 +76,9 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         self.setup_runner()
 
         kwargs = self._get_default_kwargs()
-        kwargs['cmd'].extend(command_kwargs.pop('extra_cmd_args', []))
+        extra_args = command_kwargs.pop('extra_cmd_args', [])
         kwargs.update(command_kwargs)
+        kwargs['cmd'].extend(extra_args)
 
         view = self.window.active_view()
         self.get_pattern(view)
