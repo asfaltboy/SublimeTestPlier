@@ -75,7 +75,7 @@ For example Django's test runner can be run like so:
             "env":
             {
                 "PYTHONPATH": "/home/user/.venvs/project/lib/python2.7/site-packages",
-                "REUSE_DB": "1"
+                "REUSE_DB": "1"  // WARNING: remember to use strings as values
             },
             "name": "Django Test",
             "target": "run_python_tests",
