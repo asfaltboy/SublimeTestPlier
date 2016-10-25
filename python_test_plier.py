@@ -25,7 +25,7 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         return 'sublimeansi' in list(map(str.lower, self.packages))
 
     def setup_runner(self):
-        self.settings = sublime.load_settings("test_plier.sublime-settings")
+        self.settings = sublime.load_settings("SublimeTestPlier.sublime-settings")
         _log("Settings: ", vars(self.settings))
         self.default_cmd = self.settings.get('default_cmd')
         _log("Default CMD: ", self.default_cmd)
