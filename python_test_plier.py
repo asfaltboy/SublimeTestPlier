@@ -38,6 +38,22 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         self.filename = self.window.active_view().file_name()
         _log("Filename: ", self.filename)
 
+        self.module = self._get_module(self.filename, base=None)
+        _log("Module: ", self.module)
+
+    def _get_module(self, filename, base):
+        """ Convert a filename to a "module" relative to the working path """
+        if not filename.endswith('.py'):
+            _log('Cannot get module for non python-source file: ', filename)
+            return  # only pytnon modules are supported
+        base = base or os.path.join(
+            self.window.extract_variables().get('project_path'),
+            self.window.extract_variables().get('project_base_name'))
+        _log('Getting module for file %s relative to base %s' % (filename, base))
+        assert filename.startswith(base), (
+            'Cannot test file outside of given work directory')
+        return filename.replace(base, '').replace(os.path.sep, '.')[:-3]
+
     def _get_default_kwargs(self):
         kwargs = {
             'cmd': self.default_cmd,
@@ -71,6 +87,7 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         self.class_name, self.func_name = pattern
 
     def run(self, *args, **command_kwargs):
+        _log('SublimeTestPlier running in debug mode')
         _log("Args: %s" % list(args))
         _log("Kwargs: %s" % command_kwargs)
         self.setup_runner()
@@ -80,9 +97,20 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         kwargs.update(command_kwargs)
         kwargs['cmd'].extend(extra_args)
 
+        # TODO: infer from settings.python_interpreter and settings.src_root settings
+        #       as used in https://github.com/JulianEberius/SublimePythonIDE
+        if 'env' not in kwargs:
+            kwargs['env'] = {}
+        if 'working_dir' in kwargs:
+            self.module = self._get_module(self.filename, base=kwargs['working_dir'])
+            _log("Module updated: ", self.module)
+        else:
+            kwargs['working_dir'] = ''
+
         view = self.window.active_view()
         self.get_pattern(view)
         fmt_args = dict(
+            module=self.module or '',
             filename=self.filename or '',
             test_class=self.class_name or '',
             test_func=self.func_name or '',
@@ -94,16 +122,11 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         kwargs['cmd'] = self._format_placeholder(
             kwargs['cmd'], kwargs.pop('sep_cleanup'), **fmt_args)
 
-        # TODO: infer from settings.python_interpreter and settings.src_root settings
-        #       as used in https://github.com/JulianEberius/SublimePythonIDE
-        if 'env' not in kwargs:
-            kwargs['env'] = {}
-        if 'working_dir' not in kwargs:
-            kwargs['working_dir'] = ''
         _log("Built command: ", kwargs)
 
         external = kwargs.get('external') or self.external_runner
         if external:
+            _log('Running external command (%s)' % external)
 
             if isinstance(external, bool):
                 # if "external": true, use our default
@@ -126,6 +149,8 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
             _log('Running external runner with cmd: %s' % kwargs)
             return self.window.run_command("exec", {'cmd': cmd})
         elif self.ansi_installed():
+            _log('Running internal command (with ANSI colors)')
             return self.window.run_command("ansi_color_build", kwargs)
         else:
+            _log('Running internal command (without ANSI colors)')
             return self.window.run_command("exec", kwargs)
