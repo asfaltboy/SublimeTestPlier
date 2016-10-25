@@ -8,7 +8,17 @@ import sublime
 
 from ..test_parser import TestParser
 
-DEBUG = False
+
+@property
+def DEBUG():
+    settings = sublime.load_settings("test_plier.sublime-settings")
+    return settings.get('debug')
+
+
+@DEBUG.setter
+def DEBUG(value):
+    settings = sublime.load_settings("test_plier.sublime-settings")
+    settings['debug'] = value
 
 
 def _log(*args, **kwargs):
