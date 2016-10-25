@@ -1,0 +1,29 @@
+[
+  {
+    "id": "preferences",
+    "children": [
+      {
+        "caption": "Package Settings",
+        "mnemonic": "P",
+        "id": "package-settings",
+        "children": [
+          {
+            "caption": "SublimeTestPlier",
+            "children": [
+              {
+                "command": "open_file",
+                "args": {"file": "${packages}/SublimeTestPlier/SublimeTestPlier.sublime-settings"},
+                "caption": "Settings - Default"
+              }, {
+                "command": "open_file",
+                "args": {"file": "${packages}/User/SublimeTestPlier.sublime-settings"},
+                "caption": "Settings – User"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+
+]

@@ -65,34 +65,34 @@ class TestPlierCommand(TestCase):
         ansi_cmd.assert_called_once_with(dict(
             working_dir='', env={},
             syntax='Packages/ANSIescape/ANSI.tmLanguage',
-            cmd=['py.test', 'file.py', ] + DEFAULT_CMD_ARGS))
+            cmd=['py.test', ] + DEFAULT_CMD_ARGS + ['file.py', ]))
 
     def test_command_executed_with_filename(self):
         self.view.run_command("run_python_tests")
         exec_cmd.assert_called_once_with(dict(
             working_dir='', env={},
-            cmd=['py.test', 'file.py', ] + DEFAULT_CMD_ARGS))
+            cmd=['py.test', ] + DEFAULT_CMD_ARGS + ['file.py', ]))
 
     def test_command_executed_without_filename(self):
         self.view.file_name.return_value = ''
         self.view.run_command("run_python_tests")
         exec_cmd.assert_called_once_with(dict(
             working_dir='', env={},
-            cmd=['py.test', ] + DEFAULT_CMD_ARGS))
+            cmd=['py.test', ] + DEFAULT_CMD_ARGS + []))
 
     def test_command_executed_with_selection(self):
         self.view.substr.return_value = self.mock_selection(0, 0, 'test 1')
         self.view.run_command("run_python_tests")
         exec_cmd.assert_called_once_with(dict(
             working_dir='', env={},
-            cmd=['py.test', 'file.py', '-k test 1', ] + DEFAULT_CMD_ARGS))
+            cmd=['py.test', '-k test 1', ] + DEFAULT_CMD_ARGS + ['file.py', ]))
 
     def test_command_executed_with_cursor_on_class(self):
         self.view.substr.return_value = self.mock_selection(1, 0)
         self.view.run_command("run_python_tests")
         exec_cmd.assert_called_once_with(dict(
             working_dir='', env={},
-            cmd=['py.test', 'file.py::TestCase', ] + DEFAULT_CMD_ARGS))
+            cmd=['py.test', ] + DEFAULT_CMD_ARGS + ['file.py::TestCase', ]))
 
     def test_custom_cmd_with_cursor(self):
         self.view.substr.return_value = self.mock_selection(2, 2)
