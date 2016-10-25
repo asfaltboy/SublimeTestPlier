@@ -17,7 +17,7 @@ Unlike [other plugins for running python tests][5], which mostly use a regex pat
 
 The simplest usage is simply running the build system; <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>b</kbd> (<kbd>super</kbd>+<kbd>shift</kbd>+<kbd>b</kbd> on OSX) and select **test_plier - Python Tests** from the build system selection drop-down, after using it once you may hit <kbd>ctrl</kbd>+<kbd>b</kbd> (<kbd>super</kbd>+<kbd>b</kbd> on OSX) to run the build system again. Alternatively, select **test_plier - Python Tests (external)** to run the test in [an external terminal window](#launching-an-external-terminal-window).
 
-_Note: this works by running py.test found using SublimeText's environment, which will work for the simplest of cases, but for most projects you will want to configure the test environment; for more details on this see [configuration section](#configuration) below._
+_Note: this works by running the test runner executable found using the same environment varaibles SublimeText was launched with; which, will work for the simplest of cases, but for most projects you will want to configure the test environment; for more details on this see [configuration section](#configuration) below._
 
 ### Run a specific test
 
@@ -42,7 +42,7 @@ If you add your own terminal/os don't forget to submit a pull-request :) !
 
 ## Configuration
 
-By default the command we run is `py.test {filename}::{test_class}::{test_func} -k {selection} --doctest-modules -v`.
+By default the command we run is `pytest {filename}::{test_class}::{test_func} -k {selection} --doctest-modules -v`.
 Let us look at the substitute arguments with more detail:
 
 - `--doctest-modules - ` if no UnitTest class/method given run module unittests
