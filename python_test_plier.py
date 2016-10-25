@@ -43,7 +43,7 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
 
     def _get_module(self, filename, base):
         """ Convert a filename to a "module" relative to the working path """
-        if not filename.endswith('.py'):
+        if not filename or not filename.endswith('.py'):
             _log('Cannot get module for non python-source file: ', filename)
             return ''  # only pytnon modules are supported
         base = base or os.path.join(
