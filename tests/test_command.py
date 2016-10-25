@@ -106,3 +106,38 @@ class TestPlierCommand(TestCase):
         self.view.run_command("run_python_tests", **self.custom_kwargs)
         exec_cmd.assert_called_once_with(dict(
             working_dir='', env={}, cmd=['nosetests', '-k ']))
+
+    def test_custom_unittest_module_relative_to_project(self):
+        self.view.file_name = mock.Mock(return_value='/SublimeTestPlier/tests/file.py')
+        self.view.substr.return_value = self.mock_selection(2, 2)
+        custom_kwargs = self.custom_kwargs.copy()
+        custom_kwargs['cmd'] = ['unittest', '{module}.{test_class}.{test_func}']
+
+        # default: module relative to root of project
+        self.window.extract_variables.return_value = {
+            'project_path': '/',
+            'project_base_name': 'SublimeTestPlier',
+        }
+        self.view.run_command("run_python_tests", **custom_kwargs)
+        exec_cmd.assert_called_once_with(dict(
+            working_dir='', env={},
+            cmd=['unittest', 'tests.file.TestCase.test_fail', ]))
+
+    def test_custom_unittest_module_relative_to_working_dir(self):
+        self.view.file_name = mock.Mock(return_value='/SublimeTestPlier/tests/file.py')
+        self.view.substr.return_value = self.mock_selection(2, 2)
+        custom_kwargs = self.custom_kwargs.copy()
+        custom_kwargs['cmd'] = ['unittest', '{module}.{test_class}.{test_func}']
+
+        # default: module relative to root of project
+        self.window.extract_variables.return_value = {
+            'project_path': '/',
+            'project_base_name': 'SublimeTestPlier',
+        }
+
+        # custom: module relative to the specified working dir in build system
+        custom_kwargs['working_dir'] = '/SublimeTestPlier/tests/'
+        self.view.run_command("run_python_tests", **custom_kwargs)
+        exec_cmd.assert_called_once_with(dict(
+            working_dir='/SublimeTestPlier/tests/', env={},
+            cmd=['unittest', 'file.TestCase.test_fail', ]))

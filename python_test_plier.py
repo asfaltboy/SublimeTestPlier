@@ -45,14 +45,15 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         """ Convert a filename to a "module" relative to the working path """
         if not filename.endswith('.py'):
             _log('Cannot get module for non python-source file: ', filename)
-            return  # only pytnon modules are supported
+            return ''  # only pytnon modules are supported
         base = base or os.path.join(
-            self.window.extract_variables().get('project_path'),
-            self.window.extract_variables().get('project_base_name'))
+            self.window.extract_variables().get('project_path', ''),
+            self.window.extract_variables().get('project_base_name', ''))
         _log('Getting module for file %s relative to base %s' % (filename, base))
-        assert filename.startswith(base), (
-            'Cannot test file outside of given work directory')
-        return filename.replace(base, '').replace(os.path.sep, '.')[:-3]
+        if not filename.startswith(base):
+            _log('Cannot determine module path outside of directory')
+            return ''
+        return filename.replace(base, '').replace(os.path.sep, '.')[:-3].strip('.')
 
     def _get_default_kwargs(self):
         kwargs = {
