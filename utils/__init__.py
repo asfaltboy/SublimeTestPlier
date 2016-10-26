@@ -11,13 +11,13 @@ from ..test_parser import TestParser
 
 @property
 def DEBUG():
-    settings = sublime.load_settings("test_plier.sublime-settings")
+    settings = sublime.load_settings("SublimeTestPlier.sublime-settings")
     return settings.get('debug')
 
 
 @DEBUG.setter
 def DEBUG(value):
-    settings = sublime.load_settings("test_plier.sublime-settings")
+    settings = sublime.load_settings("SublimeTestPlier.sublime-settings")
     settings['debug'] = value
 
 
