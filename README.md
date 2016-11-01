@@ -56,6 +56,9 @@ Placeholder arguments are optional, and will be cleanly removed where possible:
 - `-k {selection}  - ` use selected text as pattern
 
 You may customize the command and any of it's parameters (all optional) in your `project.sublime-project` settings.
+
+**IMPORTANT:** The only required argument of the build system is the **target**. It _must_ be set to `run_python_tests` command, in order to execute build with SublimeTestPlier's command.
+
 For example Django's test runner can be run like so:
 
 ```json
