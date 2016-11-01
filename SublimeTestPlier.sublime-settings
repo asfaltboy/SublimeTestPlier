@@ -1,0 +1,6 @@
+{
+	"default_cmd": ["pytest", "-k {selection}", "--doctest-modules",
+					"--doctest-ignore-import-errors", "-v",
+					"{filename}::{test_class}::{test_func}"],
+	"debug": false
+}

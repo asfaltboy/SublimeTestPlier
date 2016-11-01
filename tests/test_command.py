@@ -4,8 +4,6 @@ from .sublime_mock import sublime, known_commands
 from ..python_test_plier import RunPythonTestsCommand
 from .. import utils
 
-mock.patch.object(utils, 'DEBUG', True).start()
-
 exec_cmd = mock.Mock()
 ansi_cmd = mock.Mock()
 
@@ -41,6 +39,9 @@ class TestPlierCommand(TestCase):
             cmd=["nosetests", "-k {filename}:{test_class}.{test_func}"],
             sep_cleanup=':'
         )
+        self.debug_patcher = mock.patch.object(utils, 'DEBUG', return_value=True)
+        self.debug_patcher.start()
+        self.addCleanup(self.debug_patcher.stop)
 
     def tearDown(self):
         exec_cmd.reset_mock()
@@ -63,40 +64,81 @@ class TestPlierCommand(TestCase):
         self.view.run_command("run_python_tests")
         assert exec_cmd.called is False
         ansi_cmd.assert_called_once_with(dict(
+            working_dir='', env={},
             syntax='Packages/ANSIescape/ANSI.tmLanguage',
-            cmd=['py.test', 'file.py', ] + DEFAULT_CMD_ARGS))
+            cmd=['pytest', ] + DEFAULT_CMD_ARGS + ['file.py', ]))
 
     def test_command_executed_with_filename(self):
         self.view.run_command("run_python_tests")
         exec_cmd.assert_called_once_with(dict(
-            cmd=['py.test', 'file.py', ] + DEFAULT_CMD_ARGS))
+            working_dir='', env={},
+            cmd=['pytest', ] + DEFAULT_CMD_ARGS + ['file.py', ]))
 
     def test_command_executed_without_filename(self):
         self.view.file_name.return_value = ''
         self.view.run_command("run_python_tests")
         exec_cmd.assert_called_once_with(dict(
-            cmd=['py.test', ] + DEFAULT_CMD_ARGS))
+            working_dir='', env={},
+            cmd=['pytest', ] + DEFAULT_CMD_ARGS + []))
 
     def test_command_executed_with_selection(self):
         self.view.substr.return_value = self.mock_selection(0, 0, 'test 1')
         self.view.run_command("run_python_tests")
         exec_cmd.assert_called_once_with(dict(
-            cmd=['py.test', 'file.py', '-k test 1', ] + DEFAULT_CMD_ARGS))
+            working_dir='', env={},
+            cmd=['pytest', '-k test 1', ] + DEFAULT_CMD_ARGS + ['file.py', ]))
 
     def test_command_executed_with_cursor_on_class(self):
         self.view.substr.return_value = self.mock_selection(1, 0)
         self.view.run_command("run_python_tests")
         exec_cmd.assert_called_once_with(dict(
-            cmd=['py.test', 'file.py::TestCase', ] + DEFAULT_CMD_ARGS))
+            working_dir='', env={},
+            cmd=['pytest', ] + DEFAULT_CMD_ARGS + ['file.py::TestCase', ]))
 
     def test_custom_cmd_with_cursor(self):
         self.view.substr.return_value = self.mock_selection(2, 2)
         self.view.run_command("run_python_tests", **self.custom_kwargs)
         exec_cmd.assert_called_once_with(dict(
+            working_dir='', env={},
             cmd=['nosetests', '-k file.py:TestCase.test_fail', ]))
 
     def test_custom_cmd_without_file(self):
         self.view.file_name.return_value = ''
         self.view.run_command("run_python_tests", **self.custom_kwargs)
         exec_cmd.assert_called_once_with(dict(
-            cmd=['nosetests', '-k ']))
+            working_dir='', env={}, cmd=['nosetests', '-k ']))
+
+    def test_custom_unittest_module_relative_to_project(self):
+        self.view.file_name = mock.Mock(return_value='/SublimeTestPlier/tests/file.py')
+        self.view.substr.return_value = self.mock_selection(2, 2)
+        custom_kwargs = self.custom_kwargs.copy()
+        custom_kwargs['cmd'] = ['unittest', '{module}.{test_class}.{test_func}']
+
+        # default: module relative to root of project
+        self.window.extract_variables.return_value = {
+            'project_path': '/',
+            'project_base_name': 'SublimeTestPlier',
+        }
+        self.view.run_command("run_python_tests", **custom_kwargs)
+        exec_cmd.assert_called_once_with(dict(
+            working_dir='', env={},
+            cmd=['unittest', 'tests.file.TestCase.test_fail', ]))
+
+    def test_custom_unittest_module_relative_to_working_dir(self):
+        self.view.file_name = mock.Mock(return_value='/SublimeTestPlier/tests/file.py')
+        self.view.substr.return_value = self.mock_selection(2, 2)
+        custom_kwargs = self.custom_kwargs.copy()
+        custom_kwargs['cmd'] = ['unittest', '{module}.{test_class}.{test_func}']
+
+        # default: module relative to root of project
+        self.window.extract_variables.return_value = {
+            'project_path': '/',
+            'project_base_name': 'SublimeTestPlier',
+        }
+
+        # custom: module relative to the specified working dir in build system
+        custom_kwargs['working_dir'] = '/SublimeTestPlier/tests/'
+        self.view.run_command("run_python_tests", **custom_kwargs)
+        exec_cmd.assert_called_once_with(dict(
+            working_dir='/SublimeTestPlier/tests/', env={},
+            cmd=['unittest', 'file.TestCase.test_fail', ]))

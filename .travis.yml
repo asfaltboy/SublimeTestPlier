@@ -1,8 +1,6 @@
 language: python
 
-python: "3.3"
-
-before_install: export PYTHONPATH=$TRAVIS_BUILD_DIR
+python: "3.3.3"
 
 script:
-    - py.test
+    - pytest

@@ -1,0 +1,14 @@
+{
+    "selector": "source.python",
+    "target": "run_python_tests",
+    "env": {},
+    "variants": [
+        {
+                "name": "Python Tests"
+        },
+        {
+            "name": "python tests (external)",
+            "external": true
+        }
+    ]
+}

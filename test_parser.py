@@ -123,13 +123,13 @@ class TestParser(ast.NodeVisitor):
         self._log("Testing if node %s is inside a class" % node)
         return (
             # verify none of the bases are in ignored bases
-            not self.ignore_class(node)
+            not self.ignore_class(node) and
             # check if currently already inside a class
-            and self.nearest_class
+            self.nearest_class and
             # compare col offset to check if we unindented
-            and node.col_offset > self.nearest_class.col_offset
+            node.col_offset > self.nearest_class.col_offset and
             # also make sure we're not currently in an ignored class
-            and not self.nearest_ignored
+            not self.nearest_ignored
         )
 
     def first_argument_is_self(self, node):
