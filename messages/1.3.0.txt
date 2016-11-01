@@ -1,0 +1,32 @@
+Changes since 1.2.0 (79a2d02):
+
+  Docs:
+   - add a note about the importance of "target"
+   - add reminding warning in custom env example
+   - separate kbd keys
+   - update build command and external window description
+
+  Fix:
+   - correct default build command syntax
+   - merge bug, use correct settings file
+   - avoid failing if running without a target filename
+   - launch_in_iterm: update applescript for iTerm 3 beta
+   - apply "extra_cmd_args" to a custom "cmd"
+
+  Feature:
+   - add Preferences menu items
+   - allow a command to specify {module} in cmd parameters
+   - add external run script default/example
+
+  Other:
+   - Update to `pytest` instead of `py.test`
+   - Add tests for module detection and fix edge cases
+   - Test on Python 3.3.3
+   - Don't set PYTHONPATH in .travis.yml
+
+  Tests:
+   - update mocked command assertion
+
+  Contributors:
+   - Yuri Prezument
+   - Pavel Savchenko
