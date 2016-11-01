@@ -12,6 +12,7 @@ Changes since 1.2.0 (79a2d02):
    - avoid failing if running without a target filename
    - launch_in_iterm: update applescript for iTerm 3 beta
    - apply "extra_cmd_args" to a custom "cmd"
+   - clean up DEBUG setting default
 
   Feature:
    - add Preferences menu items

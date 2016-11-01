@@ -4,8 +4,6 @@ from .sublime_mock import sublime, known_commands
 from ..python_test_plier import RunPythonTestsCommand
 from .. import utils
 
-mock.patch.object(utils, 'DEBUG', True).start()
-
 exec_cmd = mock.Mock()
 ansi_cmd = mock.Mock()
 
@@ -41,6 +39,9 @@ class TestPlierCommand(TestCase):
             cmd=["nosetests", "-k {filename}:{test_class}.{test_func}"],
             sep_cleanup=':'
         )
+        self.debug_patcher = mock.patch.object(utils, 'DEBUG', return_value=True)
+        self.debug_patcher.start()
+        self.addCleanup(self.debug_patcher.stop)
 
     def tearDown(self):
         exec_cmd.reset_mock()

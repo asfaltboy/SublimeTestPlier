@@ -9,27 +9,29 @@ import sublime
 from ..test_parser import TestParser
 
 
-@property
-def DEBUG():
+def DEBUG(value=None):
     settings = sublime.load_settings("SublimeTestPlier.sublime-settings")
-    return settings.get('debug')
+    if value is None:
+        return settings.get('debug', False)
 
-
-@DEBUG.setter
-def DEBUG(value):
-    settings = sublime.load_settings("SublimeTestPlier.sublime-settings")
     settings['debug'] = value
+    settings = sublime.save_settings("SublimeTestPlier.sublime-settings")
 
 
 def _log(*args, **kwargs):
     """
-    >>> _log("Test", debug=False)
+    >>> DEBUG()
+    False
+    >>> _log("Test")
 
-    >>> DEBUG = True
+    >>> _log("Test", debug=True)
+    Test
+
+    >>> DEBUG(value=True)
     >>> _log("Test")
     Test
     """
-    if not kwargs.get('debug', DEBUG):
+    if not kwargs.get('debug', DEBUG()):
         return
     print(*args)
 
@@ -76,7 +78,7 @@ def get_test(view):
     assert line, ('No line found in region: %s' % r)
     _log('Position in code -> line %s' % line)
 
-    parser = TestParser(source, debug=DEBUG, ignore_bases=['object'])
+    parser = TestParser(source, debug=DEBUG(), ignore_bases=['object'])
     class_name, method_name = parser.parse(line)
     _log('Found class/name: %s/%s' % (class_name, method_name))
     return class_name, method_name

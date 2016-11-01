@@ -29,11 +29,29 @@ def run_command(name, *args, **kwargs):
     return cmd(*args, **kwargs)
 
 
+settings = None
+
+
 def settings_loader(settings_file):
-    assert path.exists(settings_file)
-    with open(settings_file) as f:
-        d = json.load(f)
-        return mock.MagicMock(get=d.get)
+    """ Implicitly saves settings as a global fake dict """
+    global settings
+    if settings is None:
+        settings = mock.MagicMock(spec_set=dict)
+        assert path.exists(settings_file)
+        with open(settings_file) as f:
+            data = json.load(f)
+            # settings.update(data)
+
+        def getitem(name, default=None):
+            return data.get(name, default)
+        settings.__getitem__.side_effect = getitem
+        settings.get.side_effect = getitem
+
+        def setitem(name, val):
+            data[name] = val
+        settings.__setitem__.side_effect = setitem
+
+    return settings
 
 window_variables = {
     'packages': packages,
@@ -45,7 +63,8 @@ window = mock.Mock(new_file=mock.Mock(return_value=view),
                    extract_variables=mock.Mock(return_value=window_variables),
                    active_view=mock.Mock(return_value=view))
 sublime = mock.Mock(active_window=mock.Mock(return_value=window),
-                    load_settings=mock.Mock(side_effect=settings_loader))
+                    load_settings=mock.Mock(side_effect=settings_loader),
+                    save_settings=mock.Mock(side_effect=settings_loader))
 
 WindowCommand = type(object.__name__, (mock.MagicMock,),
                      dict(object.__dict__, window=window))
