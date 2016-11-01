@@ -7,15 +7,9 @@ import sublime_plugin
 
 from .utils import get_test, _log, get_selection_content
 
-# TODO: needs tests
 
 CUR_DIR = os.path.abspath(os.path.dirname(__file__))
 DEFAULT_EXTERNAL = ["python", os.path.join(CUR_DIR, 'utils', 'run_externally.py')]
-
-
-class PythonTestRunnerCommand(sublime_plugin.WindowCommand):
-    def run(self, *args, **kwargs):
-        self.window.run_command("run_python_tests", kwargs)
 
 
 class RunPythonTestsCommand(sublime_plugin.WindowCommand):

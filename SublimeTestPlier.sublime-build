@@ -1,6 +1,6 @@
 {
     "selector": "source.python",
-    "target": "python_test_runner",
+    "target": "run_python_tests",
     "env": {},
     "variants": [
         {
