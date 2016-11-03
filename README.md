@@ -35,7 +35,7 @@ The existing command kwargs are parsed into a "shell-friendly" command (delimite
 
 #### Default/Example
 
-An example for an external command execution helpers is provided in the `utils/` sub-dir. And when "external" command argument is set to `true`, the `utils/run_externally.py` is launched, and this spawns a child process that calls `osascript launch_in_iterm.applescript` to run the test in an iTerm session.
+An example for an external command execution helpers is provided in the `utils/` sub-dir. And when "external" command argument is set to `true`, the `utils/run_externally.py` is launched, and this spawns a child process that calls `osascript launch_in_iterm.applescript` to run the test in an iTerm session ([iTerm is an OSX terminal][9]).
 
 If you add your own terminal/os don't forget to submit a pull-request :) !
 
@@ -112,3 +112,4 @@ We welcome any and all contributions. For stuff that I'd like to see done first 
 [6]: test_parser.py
 [7]: http://sublime-text-unofficial-documentation.readthedocs.org/en/latest/reference/build_systems/configuration.html
 [8]: https://github.com/aziz/SublimeANSI
+[9]: https://www.iterm2.com/

@@ -2,5 +2,8 @@
 	"default_cmd": ["pytest", "-k {selection}", "--doctest-modules",
 					"--doctest-ignore-import-errors", "-v",
 					"{filename}::{test_class}::{test_func}"],
+
+	// a command that N arguments and calls these in an external terminal, see default:
+	// "default_external": ["python", "$packages/User/Test Plier/utils/run_externally.py"],
 	"debug": false
 }

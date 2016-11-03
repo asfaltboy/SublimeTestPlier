@@ -5,11 +5,7 @@ import re
 import sublime
 import sublime_plugin
 
-from .utils import get_test, _log, get_selection_content
-
-
-CUR_DIR = os.path.abspath(os.path.dirname(__file__))
-DEFAULT_EXTERNAL = ["python", os.path.join(CUR_DIR, 'utils', 'run_externally.py')]
+from . import utils
 
 
 class RunPythonTestsCommand(sublime_plugin.WindowCommand):
@@ -20,32 +16,32 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
 
     def setup_runner(self):
         self.settings = sublime.load_settings("SublimeTestPlier.sublime-settings")
-        _log("Settings: ", vars(self.settings))
+        utils._log("Settings: ", vars(self.settings))
         self.default_cmd = self.settings.get('default_cmd')
-        _log("Default CMD: ", self.default_cmd)
+        utils._log("Default CMD: ", self.default_cmd)
 
         self.packages = os.listdir(self.window.extract_variables().get(
             'packages'))
-        _log("Packages: ", self.packages)
+        utils._log("Packages: ", self.packages)
 
         # get current filename
         self.filename = self.window.active_view().file_name()
-        _log("Filename: ", self.filename)
+        utils._log("Filename: ", self.filename)
 
         self.module = self._get_module(self.filename, base=None)
-        _log("Module: ", self.module)
+        utils._log("Module: ", self.module)
 
     def _get_module(self, filename, base):
         """ Convert a filename to a "module" relative to the working path """
         if not filename or not filename.endswith('.py'):
-            _log('Cannot get module for non python-source file: ', filename)
+            utils._log('Cannot get module for non python-source file: ', filename)
             return ''  # only pytnon modules are supported
         base = base or os.path.join(
             self.window.extract_variables().get('project_path', ''),
             self.window.extract_variables().get('project_base_name', ''))
-        _log('Getting module for file %s relative to base %s' % (filename, base))
+        utils._log('Getting module for file %s relative to base %s' % (filename, base))
         if not filename.startswith(base):
-            _log('Cannot determine module path outside of directory')
+            utils._log('Cannot determine module path outside of directory')
             return ''
         return filename.replace(base, '').replace(os.path.sep, '.')[:-3].strip('.')
 
@@ -73,18 +69,18 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         return result
 
     def get_pattern(self, view):
-        _log("View: ", view)
-        pattern = view and get_test(view)
-        _log('Test pattern: ', pattern)
+        utils._log("View: ", view)
+        pattern = view and utils.get_test(view)
+        utils._log('Test pattern: ', pattern)
         if not pattern:
             self.class_name = self.func_name = None
             return
         self.class_name, self.func_name = pattern
 
     def run(self, *args, **command_kwargs):
-        _log('SublimeTestPlier running in debug mode')
-        _log("Args: %s" % list(args))
-        _log("Kwargs: %s" % command_kwargs)
+        utils._log('SublimeTestPlier running in debug mode')
+        utils._log("Args: %s" % list(args))
+        utils._log("Kwargs: %s" % command_kwargs)
         self.setup_runner()
 
         kwargs = self._get_default_kwargs()
@@ -98,7 +94,7 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
             kwargs['env'] = {}
         if 'working_dir' in kwargs:
             self.module = self._get_module(self.filename, base=kwargs['working_dir'])
-            _log("Module updated: ", self.module)
+            utils._log("Module updated: ", self.module)
         else:
             kwargs['working_dir'] = ''
 
@@ -110,22 +106,23 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
             test_class=self.class_name or '',
             test_func=self.func_name or '',
         )
-        selection = get_selection_content(view)
+        selection = utils.get_selection_content(view)
         if selection:
             fmt_args['selection'] = selection
 
         kwargs['cmd'] = self._format_placeholder(
             kwargs['cmd'], kwargs.pop('sep_cleanup'), **fmt_args)
 
-        _log("Built command: ", kwargs)
+        utils._log("Built command: ", kwargs)
 
         external = kwargs.get('external') or self.external_runner
         if external:
-            _log('Running external command (%s)' % external)
+            utils._log('Running external command (%s)' % external)
 
             if isinstance(external, bool):
                 # if "external": true, use our default
-                base_command = DEFAULT_EXTERNAL
+                default = utils.get_default_command()
+                base_command = self.settings.get("default_external", default)
             elif isinstance(external, (list, tuple)):
                 base_command = external
             else:
@@ -134,18 +131,26 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
 
             _env = ' '.join('%s=%s' % (ename, evalue) for
                             ename, evalue in kwargs['env'].items())
-            _cmd = 'cd {path} && {env_setup} {cmd}'.format(
-                path=kwargs['working_dir'],
+            change_dir_cmd = ''
+            if kwargs['working_dir']:
+                change_dir_cmd = 'cd {path} && '.format(path=kwargs['working_dir'])
+            elif self.filename:
+                # for running individual arbitrary test modules
+                filename_dir = os.path.dirname(self.filename)
+                change_dir_cmd = 'cd {path} && '.format(path=filename_dir)
+
+            _cmd = '{cwd}{env_setup} {cmd}'.format(
+                cwd=change_dir_cmd,
                 cmd=' '.join(kwargs['cmd']),
                 env_setup=_env,
             )
             cmd = (base_command) + [_cmd]
             kwargs['cmd'] = cmd
-            _log('Running external runner with cmd: %s' % kwargs)
+            utils._log('Running external runner with cmd: %s' % kwargs)
             return self.window.run_command("exec", {'cmd': cmd})
         elif self.ansi_installed():
-            _log('Running internal command (with ANSI colors)')
+            utils._log('Running internal command (with ANSI colors)')
             return self.window.run_command("ansi_color_build", kwargs)
         else:
-            _log('Running internal command (without ANSI colors)')
+            utils._log('Running internal command (without ANSI colors)')
             return self.window.run_command("exec", kwargs)

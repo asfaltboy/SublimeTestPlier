@@ -4,10 +4,7 @@
     "env": {},
     "variants": [
         {
-                "name": "Python Tests"
-        },
-        {
-            "name": "python tests (external)",
+            "name": "Run in External Terminal",
             "external": true
         }
     ]
