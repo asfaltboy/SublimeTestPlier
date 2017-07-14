@@ -88,6 +88,27 @@ For example Django's test runner can be run like so:
 }
 ```
 
+A py.test runner can be cofigured like this:
+
+```json
+{
+    "build_systems":
+    [
+        {
+            "cmd": [
+                "/home/user/.venvs/project/bin/pytest",
+                "{filename}::{test_class}::{test_func}",
+                "-k {selection}",
+                "--doctest-modules",
+                "-v"
+            ],
+            "name": "Pytest Runner",
+            "target": "run_python_tests"
+        }
+    ]
+}
+```
+
 For more info on the SublimeText build-system configuration see [the unofficial documentation][7].
 
 
