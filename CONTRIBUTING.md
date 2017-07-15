@@ -1,4 +1,4 @@
-Contributing
+# Contributing
 
 We welcome any and all contributions; open issues for bugs & suggestions and pull-requests if you want to help solve these.
 
