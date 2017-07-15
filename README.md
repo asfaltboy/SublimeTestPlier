@@ -118,12 +118,7 @@ This plugin supports passing the command through [SublimeANSI][8] to display ANS
 
 ## Contributing
 
-We welcome any and all contributions. For stuff that I'd like to see done first see below:
-
-### _Things on our TODO list_
-
-- [ ] document all arguments the command accepts
-- [x] add an example for external test - how I use it to launch test in an iTerm2 session.
+Please refer to the [contributing documentation][10]
 
 [1]: https://travis-ci.org/asfaltboy/SublimeTestPlier
 [2]: https://travis-ci.org/asfaltboy/SublimeTestPlier.svg?branch=master
@@ -134,3 +129,4 @@ We welcome any and all contributions. For stuff that I'd like to see done first 
 [7]: http://sublime-text-unofficial-documentation.readthedocs.org/en/latest/reference/build_systems/configuration.html
 [8]: https://github.com/aziz/SublimeANSI
 [9]: https://www.iterm2.com/
+[10]: CONTRIBUTING.md
