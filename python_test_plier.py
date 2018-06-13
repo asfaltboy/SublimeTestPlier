@@ -11,6 +11,11 @@ from . import utils
 class RunPythonTestsCommand(sublime_plugin.WindowCommand):
     external_runner = None
 
+    def __init__(self, window):
+        super().__init__(window)
+        self.old_func_name = ''
+        self.old_class_name = ''
+
     def ansi_installed(self):
         return 'sublimeansi' in list(map(str.lower, self.packages))
 
@@ -76,6 +81,13 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
             self.class_name = self.func_name = None
             return
         self.class_name, self.func_name = pattern
+
+        if self.func_name and not self.func_name.startswith( 'test_' ):
+            self.func_name = self.old_func_name
+            self.class_name = self.old_class_name
+
+        self.old_func_name = self.func_name
+        self.old_class_name = self.class_name
 
     def run(self, *args, **command_kwargs):
         utils._log('SublimeTestPlier running in debug mode')
