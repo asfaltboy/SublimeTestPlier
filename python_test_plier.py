@@ -19,6 +19,9 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         else:
             super().__init__()
 
+        settings = sublime.load_settings("SublimeTestPlier.sublime-settings")
+        self.run_last_valid_test = settings.get('run_last_valid_test', False)
+
         self.old_func_name = ''
         self.old_class_name = ''
 
@@ -88,12 +91,14 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
             return
         self.class_name, self.func_name = pattern
 
-        if self.func_name and not self.func_name.startswith( 'test_' ):
-            self.func_name = self.old_func_name
-            self.class_name = self.old_class_name
+        if self.run_last_valid_test:
 
-        self.old_func_name = self.func_name
-        self.old_class_name = self.class_name
+            if self.func_name and not self.func_name.startswith( 'test_' ):
+                self.func_name = self.old_func_name
+                self.class_name = self.old_class_name
+
+            self.old_func_name = self.func_name
+            self.old_class_name = self.class_name
 
     def run(self, *args, **command_kwargs):
         utils._log('SublimeTestPlier running in debug mode')
