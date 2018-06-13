@@ -7,5 +7,16 @@
     "-v",
     "{filename}::{test_class}::{test_func}"
   ],
-  "debug": false
+  "debug": false,
+
+  // If you select and ran the test `test_py` on the class UnitTest and latter
+  // moved from the test file to the source code on the class MyClass on the
+  // function `my_function`. If you try to run the unit test, the plugin will end
+  // up running `MyClass` and `my_function` as unit tests. But it is invalid as
+  // they are not tests.
+  //
+  // With this setting, when running individual Unit Tests, it will run the last
+  // function which had its name starting with `test_` and not the current one
+  // named `my_function`.
+  "run_last_valid_test": true
 }
