@@ -7,5 +7,5 @@
     "-v",
     "{filename}::{test_class}::{test_func}"
   ],
-  "debug": false
+  "debug": true
 }
