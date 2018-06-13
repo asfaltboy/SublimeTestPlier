@@ -13,10 +13,12 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
 
     def __init__(self, window=None):
 
-        if not window:
-            window = sublime.active_window()
+        if window:
+            super().__init__(window)
 
-        super().__init__(window)
+        else:
+            super().__init__()
+
         self.old_func_name = ''
         self.old_class_name = ''
 
