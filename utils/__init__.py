@@ -11,12 +11,12 @@ from ..test_parser import TestParser
 
 
 def DEBUG(value=None):
-    settings = sublime.load_settings("SublimeTestPlier.sublime-settings")
+    settings = sublime.load_settings("TestPlier.sublime-settings")
     if value is None:
         return settings.get('debug', False)
 
     settings['debug'] = value
-    settings = sublime.save_settings("SublimeTestPlier.sublime-settings")
+    settings = sublime.save_settings("TestPlier.sublime-settings")
 
 
 def _log(*args, **kwargs):

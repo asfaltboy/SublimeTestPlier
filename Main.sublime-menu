@@ -8,15 +8,15 @@
         "id": "package-settings",
         "children": [
           {
-            "caption": "SublimeTestPlier",
+            "caption": "TestPlier",
             "children": [
               {
                 "command": "open_file",
-                "args": {"file": "${packages}/SublimeTestPlier/SublimeTestPlier.sublime-settings"},
+                "args": {"file": "${packages}/TestPlier/TestPlier.sublime-settings"},
                 "caption": "Settings - Default"
               }, {
                 "command": "open_file",
-                "args": {"file": "${packages}/User/SublimeTestPlier.sublime-settings"},
+                "args": {"file": "${packages}/User/TestPlier.sublime-settings"},
                 "caption": "Settings – User"
               }
             ]

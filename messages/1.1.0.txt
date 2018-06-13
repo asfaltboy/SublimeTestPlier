@@ -11,4 +11,4 @@ Changes since 1.0.0:
    - Fix travis runner
 
   Tests:
-   - add and automate testing of SublimeTestPlier
+   - add and automate testing of TestPlier

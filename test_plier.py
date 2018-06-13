@@ -19,7 +19,7 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         else:
             super().__init__()
 
-        settings = sublime.load_settings("SublimeTestPlier.sublime-settings")
+        settings = sublime.load_settings("TestPlier.sublime-settings")
         self.run_last_valid_test = settings.get('run_last_valid_test', False)
 
         self.old_func_name = ''
@@ -29,7 +29,7 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         return 'sublimeansi' in list(map(str.lower, self.packages))
 
     def setup_runner(self):
-        self.settings = sublime.load_settings("SublimeTestPlier.sublime-settings")
+        self.settings = sublime.load_settings("TestPlier.sublime-settings")
         utils._log("Settings: ", vars(self.settings))
         self.default_cmd = self.settings.get('default_cmd')
         utils._log("Default CMD: ", self.default_cmd)
@@ -101,7 +101,7 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
             self.old_class_name = self.class_name
 
     def run(self, *args, **command_kwargs):
-        utils._log('SublimeTestPlier running in debug mode')
+        utils._log('TestPlier running in debug mode')
         utils._log("Args: %s" % list(args))
         utils._log("Kwargs: %s" % command_kwargs)
         self.setup_runner()
