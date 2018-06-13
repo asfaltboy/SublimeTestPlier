@@ -18,5 +18,5 @@
   // With this setting, when running individual Unit Tests, it will run the last
   // function which had its name starting with `test_` and not the current one
   // named `my_function`.
-  "run_last_valid_test": false
+  "run_last_valid_test": true
 }
