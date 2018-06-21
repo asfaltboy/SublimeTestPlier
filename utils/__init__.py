@@ -73,7 +73,7 @@ def get_test(view):
 
     # try to detect if r is inside class/method
     source = view.substr(sublime.Region(0, view.size()))
-    _log("source is: ", source)
+    # _log("source is: ", source)
     line, col = view.rowcol(int(r.a))
     line = line + 1
     assert line, ('No line found in region: %s' % r)

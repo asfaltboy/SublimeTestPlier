@@ -84,20 +84,29 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
 
     def get_pattern(self, view):
         utils._log("View: ", view)
-        pattern = view and utils.get_test(view)
+        pattern = utils.get_test(view)
         utils._log('Test pattern: ', pattern)
-        if not pattern:
-            self.class_name = self.func_name = None
-            return
         self.class_name, self.func_name = pattern
 
+        if not self.class_name and not self.func_name:
+
+            if not self.old_func_name and not self.old_class_name:
+                self.class_name = self.func_name = None
+                return
+
         if self.run_last_valid_test:
+            self.get_last_test()
 
-            if self.func_name and not self.func_name.startswith( 'test_' ):
-                self.func_name = self.old_func_name
-                self.class_name = self.old_class_name
+    def get_last_test(self):
 
+        if not self.func_name or self.func_name and not self.func_name.lower().startswith( 'test_' ):
+            self.func_name = self.old_func_name
+            self.class_name = self.old_class_name
+
+        if self.func_name:
             self.old_func_name = self.func_name
+
+        if self.class_name:
             self.old_class_name = self.class_name
 
     def run(self, *args, **command_kwargs):
