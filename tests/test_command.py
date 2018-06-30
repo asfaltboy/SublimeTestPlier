@@ -1,4 +1,5 @@
 from unittest import TestCase, mock
+import sys
 
 from .sublime_mock import sublime, known_commands
 from ..python_test_plier import RunPythonTestsCommand
@@ -142,3 +143,22 @@ class TestPlierCommand(TestCase):
         exec_cmd.assert_called_once_with(dict(
             working_dir='/SublimeTestPlier/tests/', env={},
             cmd=['unittest', 'file.TestCase.test_fail', ]))
+
+    def test_command_external_python_ast(self):
+        import tempfile
+
+        # create a temporary file and write some data to it
+        with tempfile.NamedTemporaryFile(suffix='.py', delete=False) as fp:
+            fp.write(TEST_CONTENT.encode())
+            fp.close()
+
+            self.view.file_name.return_value = fp.name
+            self.view.substr.return_value = self.mock_selection(1, 0)
+            python = sys.executable
+            self.view.run_command("run_python_tests", python_executable=python)
+
+        exec_cmd.assert_called_once_with(dict(
+            working_dir=mock.ANY, env=mock.ANY,
+            python_executable=python,
+            cmd=['pytest', ] + DEFAULT_CMD_ARGS + ['%s::TestCase' % fp.name, ]
+        ))
