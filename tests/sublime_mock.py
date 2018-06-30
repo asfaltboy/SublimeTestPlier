@@ -37,8 +37,10 @@ def settings_loader(settings_file):
     global settings
     if settings is None:
         settings = mock.MagicMock(spec_set=dict)
-        assert path.exists(settings_file)
-        with open(settings_file) as f:
+        assert settings_file == 'SublimeTestPlier.sublime-settings'
+        settings_file_path = path.join(path.abspath(path.dirname(path.dirname(__file__))), settings_file)
+        assert path.exists(settings_file_path), 'Invalid settings file %s' % settings_file_path
+        with open(settings_file_path) as f:
             data = json.load(f)
             # settings.update(data)
 

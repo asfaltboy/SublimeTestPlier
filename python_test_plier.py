@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from copy import deepcopy
 import os
 import re
 
@@ -68,26 +69,23 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
                 continue
         return result
 
-    def get_pattern(self, view):
+    def get_pattern(self, view, python_exec):
         utils._log("View: ", view)
-        pattern = view and utils.get_test(view)
+        pattern = view and utils.get_test(view, use_python=python_exec)
         utils._log('Test pattern: ', pattern)
         if not pattern:
             self.class_name = self.func_name = None
             return
         self.class_name, self.func_name = pattern
 
-    def run(self, *args, **command_kwargs):
-        utils._log('SublimeTestPlier running in debug mode')
-        utils._log("Args: %s" % list(args))
-        utils._log("Kwargs: %s" % command_kwargs)
-        self.setup_runner()
-
-        kwargs = self._get_default_kwargs()
-        extra_args = command_kwargs.pop('extra_cmd_args', [])
-        kwargs.update(command_kwargs)
+    def get_command_kwargs(self, **addl_kwargs):
+        # prepare default command arguments
+        kwargs = deepcopy(self._get_default_kwargs())
+        extra_args = kwargs.pop('extra_cmd_args', [])
+        kwargs.update(addl_kwargs)
         kwargs['cmd'].extend(extra_args)
 
+        # get the command environment
         # TODO: infer from settings.python_interpreter and settings.src_root settings
         #       as used in https://github.com/JulianEberius/SublimePythonIDE
         if 'env' not in kwargs:
@@ -98,8 +96,14 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         else:
             kwargs['working_dir'] = ''
 
+        # find the test module/file/pattern in the view
         view = self.window.active_view()
-        self.get_pattern(view)
+
+        # use a given python executable to parse the tests (using ast)
+        default_python = self.settings.get('python_executable', None)
+        python_executable = kwargs.pop('python_executable') or default_python
+        self.get_pattern(view, python_exec=python_executable)
+
         fmt_args = dict(
             module=self.module or '',
             filename=self.filename or '',
@@ -113,44 +117,61 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         kwargs['cmd'] = self._format_placeholder(
             kwargs['cmd'], kwargs.pop('sep_cleanup'), **fmt_args)
 
+        # default external command can be used if not given
+        if kwargs.get('external', self.external_runner):
+            kwargs['external'] = kwargs.get('external', self.external_runner)
+
         utils._log("Built command: ", kwargs)
+        return kwargs
 
-        external = kwargs.get('external') or self.external_runner
-        if external:
-            utils._log('Running external command (%s)' % external)
+    def get_external_command(self, external, kwargs):
+        utils._log('Running external command (%s)' % external)
 
-            if isinstance(external, bool):
-                # if "external": true, use our default
-                default = utils.get_default_command()
-                base_command = self.settings.get("default_external", default)
-            elif isinstance(external, (list, tuple)):
-                base_command = external
-            else:
-                raise Exception("External command must be either true/false"
-                                " or a list of arguments")
+        if isinstance(external, bool):
+            # if "external": true, use our default
+            default = utils.get_default_command()
+            base_command = self.settings.get("default_external", default)
+        elif isinstance(external, (list, tuple)):
+            base_command = external
+        else:
+            raise Exception("External command must be either true/false"
+                            " or a list of arguments")
 
-            _env = ' '.join('%s=%s' % (ename, evalue) for
-                            ename, evalue in kwargs['env'].items())
-            change_dir_cmd = ''
-            if kwargs['working_dir']:
-                change_dir_cmd = 'cd {path} && '.format(path=kwargs['working_dir'])
-            elif self.filename:
-                # for running individual arbitrary test modules
-                filename_dir = os.path.dirname(self.filename)
-                change_dir_cmd = 'cd {path} && '.format(path=filename_dir)
+        _env = ' '.join('%s=%s' % (ename, evalue) for
+                        ename, evalue in kwargs['env'].items())
+        change_dir_cmd = ''
+        if kwargs['working_dir']:
+            change_dir_cmd = 'cd {path} && '.format(path=kwargs['working_dir'])
+        elif self.filename:
+            # for running individual arbitrary test modules
+            filename_dir = os.path.dirname(self.filename)
+            change_dir_cmd = 'cd {path} && '.format(path=filename_dir)
 
-            _cmd = '{cwd}{env_setup} {cmd}'.format(
-                cwd=change_dir_cmd,
-                cmd=' '.join(kwargs['cmd']),
-                env_setup=_env,
-            )
-            cmd = (base_command) + [_cmd]
-            kwargs['cmd'] = cmd
+        _cmd = '{cwd}{env_setup} {cmd}'.format(
+            cwd=change_dir_cmd,
+            cmd=' '.join(kwargs['cmd']),
+            env_setup=_env,
+        )
+        return (base_command) + [_cmd]
+
+    def run(self, *args, **command_kwargs):
+        utils._log('SublimeTestPlier running in debug mode')
+        utils._log("Args: %s" % list(args))
+        utils._log("Kwargs: %s" % command_kwargs)
+
+        self.setup_runner()
+
+        kwargs = self.get_command_kwargs(**command_kwargs)
+
+        if 'external' in kwargs:
+            cmd = self.get_external_command(kwargs['external'], kwargs)
             utils._log('Running external runner with cmd: %s' % kwargs)
             return self.window.run_command("exec", {'cmd': cmd})
+
         elif self.ansi_installed():
             utils._log('Running internal command (with ANSI colors)')
             return self.window.run_command("ansi_color_build", kwargs)
+
         else:
             utils._log('Running internal command (without ANSI colors)')
             return self.window.run_command("exec", kwargs)

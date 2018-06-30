@@ -1,5 +1,20 @@
+"""
+Find a test class and/or test method in given source code line.
+See TestParser docstring below for details.
+
+Usage:
+
+    python test_parser.py <source_module> <line>
+
+Example:
+
+    >>> python test_parser.py your_source_file.py 4
+    TestCase,test_method
+
+"""
 from __future__ import print_function
 import ast
+import sys
 
 
 class TestParser(ast.NodeVisitor):
@@ -185,3 +200,21 @@ class TestParser(ast.NodeVisitor):
             self.nearest_class = None
             self.nearest_func = node
         return self.generic_visit(node)
+
+
+def cli():
+    if not len(sys.argv) == 3:
+        sys.exit('Missing required arguments!\n%s' % __doc__)
+
+    _, module, line = sys.argv
+
+    with open(module) as module_file:
+        source_code = module_file.read()
+        parser = TestParser(source_code)
+        result = parser.parse(line=int(line))
+        printable_result = ','.join(part or '' for part in result)
+        print(printable_result)
+
+
+if __name__ == '__main__':
+    cli()
