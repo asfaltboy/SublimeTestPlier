@@ -3,6 +3,7 @@
 | Master | Develop |
 | ------ |-------- |
 | [![Build Status][2]][1] | [![Build Status][3]][1] |
+| [![codecov](https://codecov.io/gh/asfaltboy/SublimeTestPlier/branch/master/graph/badge.svg)][11] | [![codecov](https://codecov.io/gh/asfaltboy/SublimeTestPlier/branch/master/graph/badge.svg)][12] |
 
 This [Sublime Text 3 (only)][4] plugin allows python developers to run (a single or  more) tests quickly from within a project environment.
 
@@ -130,3 +131,5 @@ Please refer to the [contributing documentation][10]
 [8]: https://github.com/aziz/SublimeANSI
 [9]: https://www.iterm2.com/
 [10]: CONTRIBUTING.md
+[11]: https://codecov.io/gh/asfaltboy/SublimeTestPlier?branch=master
+[12]: https://codecov.io/gh/asfaltboy/SublimeTestPlier?branch=develop
