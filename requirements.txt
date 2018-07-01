@@ -1,4 +1,0 @@
-mock==2.0
-pytest==3.0.3
-pytest-mock==1.2
-pytest-drop-dup-tests>=0.1.0
