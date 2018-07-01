@@ -4,4 +4,6 @@ python: "3.3.6"
 install:
   - pip install -r test-reqs.txt
 script:
-  - pytest --flake8
+  - pytest --flake8 --cov=./
+after_success:
+  codecov
