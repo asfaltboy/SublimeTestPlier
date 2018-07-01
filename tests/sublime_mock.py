@@ -10,6 +10,7 @@ def insert_to_buffer(obj):
     global _buffer
     _buffer = (_buffer or '') + obj['characters']
 
+
 packages = path.abspath(path.dirname(__file__))
 known_commands = {
     'insert': insert_to_buffer,
@@ -54,6 +55,7 @@ def settings_loader(settings_file):
         settings.__setitem__.side_effect = setitem
 
     return settings
+
 
 window_variables = {
     'packages': packages,

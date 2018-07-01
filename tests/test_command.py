@@ -53,7 +53,7 @@ class TestPlierCommand(TestCase):
 
     def mock_region(self, r, c):
         self.view.rowcol.return_value = (r, c)
-        return mock.Mock(a=r+c)
+        return mock.Mock(a=r + c)
 
     def mock_selection(self, r, c, substring=''):
         self.selection.append(self.mock_region(r, c))
@@ -159,6 +159,5 @@ class TestPlierCommand(TestCase):
 
         exec_cmd.assert_called_once_with(dict(
             working_dir=mock.ANY, env=mock.ANY,
-            python_executable=python,
             cmd=['pytest', ] + DEFAULT_CMD_ARGS + ['%s::TestCase' % fp.name, ]
         ))

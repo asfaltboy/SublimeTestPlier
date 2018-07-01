@@ -8,7 +8,7 @@ Usage:
 
 Example:
 
-    >>> python test_parser.py your_source_file.py 4
+    > python test_parser.py your_source_file.py 4
     TestCase,test_method
 
 """

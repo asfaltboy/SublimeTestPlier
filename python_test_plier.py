@@ -101,7 +101,7 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
 
         # use a given python executable to parse the tests (using ast)
         default_python = self.settings.get('python_executable', None)
-        python_executable = kwargs.pop('python_executable') or default_python
+        python_executable = kwargs.pop('python_executable', None) or default_python
         self.get_pattern(view, python_exec=python_executable)
 
         fmt_args = dict(
