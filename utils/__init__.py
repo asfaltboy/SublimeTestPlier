@@ -4,10 +4,11 @@ and returning a test class/method name.
 """
 from __future__ import print_function
 import os
+import subprocess
 
 import sublime
 
-from ..test_parser import TestParser
+from .. import test_parser
 
 
 def DEBUG(value=None):
@@ -61,7 +62,13 @@ def get_selection_content(view):
         return selected_string
 
 
-def get_test(view):
+def get_test_external_python(python, filename, line):
+    args = [python, os.path.abspath(test_parser.__file__), filename, str(line)]
+    output = subprocess.check_output(args)
+    return tuple((part.decode('utf8') for part in output.strip().split(b',')))
+
+
+def get_test(view, use_python=None):
     """
     This helper method which locates a cursor/region in given view
     and returns selected/containing test class/method.
@@ -79,8 +86,13 @@ def get_test(view):
     assert line, ('No line found in region: %s' % r)
     _log('Position in code -> line %s' % line)
 
-    parser = TestParser(source, debug=DEBUG(), ignore_bases=['object'])
-    class_name, method_name = parser.parse(line)
+    if use_python:
+        filename = view.file_name()
+        assert filename, 'Cannot use_python without a filename'
+        class_name, method_name = get_test_external_python(use_python, filename, line)
+    else:
+        parser = test_parser.TestParser(source, debug=DEBUG(), ignore_bases=['object'])
+        class_name, method_name = parser.parse(line)
     _log('Found class/name: %s/%s' % (class_name, method_name))
     return class_name, method_name
 
