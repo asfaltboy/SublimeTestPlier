@@ -26,18 +26,11 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         self.old_func_name = ''
         self.old_class_name = ''
 
-    def ansi_installed(self):
-        return 'sublimeansi' in list(map(str.lower, self.packages))
-
     def setup_runner(self):
         self.settings = sublime.load_settings("TestPlier.sublime-settings")
         utils._log("Settings: ", vars(self.settings))
         self.default_cmd = self.settings.get('default_cmd')
         utils._log("Default CMD: ", self.default_cmd)
-
-        self.packages = os.listdir(self.window.extract_variables().get(
-            'packages'))
-        utils._log("Packages: ", self.packages)
 
         # get current filename
         active_view = self.window.active_view()
@@ -71,7 +64,7 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
             # trim the following string in-between interpolated parts
             'sep_cleanup': '::',
         }
-        if self.ansi_installed():
+        if self.is_to_use_ansiescape:
             kwargs['syntax'] = "Packages/ANSIescape/ANSI.tmLanguage"
         return kwargs
 
@@ -191,11 +184,23 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         )
         return (base_command) + [_cmd]
 
+    def setup_ansiescape(self, command_kwargs):
+        sublimeansi = 'sublimeansi'
+
+        if sublimeansi in command_kwargs:
+            command_kwargs.pop( sublimeansi )
+            self.is_to_use_ansiescape = True
+
+        else:
+            self.is_to_use_ansiescape = False
+        utils._log("is_to_use_ansiescape:", self.is_to_use_ansiescape)
+
     def run(self, *args, **command_kwargs):
         utils._log('SublimeTestPlier running in debug mode')
         utils._log("Args: %s" % list(args))
         utils._log("Kwargs: %s" % command_kwargs)
 
+        self.setup_ansiescape( command_kwargs )
         self.setup_runner()
 
         kwargs = self.get_command_kwargs(**command_kwargs)
@@ -205,7 +210,7 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
             utils._log('Running external runner with cmd: %s' % kwargs)
             return self.window.run_command("exec", {'cmd': cmd})
 
-        elif self.ansi_installed():
+        elif self.is_to_use_ansiescape:
             utils._log('Running internal command (with ANSI colors)')
             return self.window.run_command("ansi_color_build", kwargs)
 

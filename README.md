@@ -115,7 +115,23 @@ For more info on the SublimeText build-system configuration see [the unofficial 
 
 ## Sublime ANSI
 
-This plugin supports passing the command through [SublimeANSI][8] to display ANSI colors in the ST output panel. This will be automatically activated if the plugin is installed.
+This plugin supports passing the command through [SublimeANSI][8] to display ANSI colors in the ST output panel.
+If you want to use `SublimeANSI`,
+add a empty key called `sublimeansi` on your `.sublime-build` file.
+For example:
+```json
+{
+    "build_systems":
+    [
+        {
+            "cmd": [ "..." ],
+            "name": "Pytest Runner",
+            "target": "run_python_tests",
+            "sublimeansi": "",
+        }
+    ]
+}
+```
 
 ## Contributing
 
