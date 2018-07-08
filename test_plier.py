@@ -196,14 +196,24 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         utils._log("is_to_use_ansiescape:", self.is_to_use_ansiescape)
 
     def run(self, *args, **command_kwargs):
+        global last_valid_kwargs
+
         utils._log('SublimeTestPlier running in debug mode')
         utils._log("Args: %s" % list(args))
         utils._log("Kwargs: %s" % command_kwargs)
 
-        self.setup_ansiescape( command_kwargs )
-        self.setup_runner()
+        active_view = self.window.active_view()
+        scope_name = active_view.scope_name(0)
 
-        kwargs = self.get_command_kwargs(**command_kwargs)
+        if scope_name.startswith( "source.python" ):
+            self.setup_ansiescape( command_kwargs )
+            self.setup_runner()
+
+            kwargs = self.get_command_kwargs(**command_kwargs)
+            last_valid_kwargs = kwargs
+
+        else:
+            kwargs = last_valid_kwargs
 
         if 'external' in kwargs:
             cmd = self.get_external_command(kwargs['external'], kwargs)
