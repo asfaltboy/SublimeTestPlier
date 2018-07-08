@@ -40,20 +40,25 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         utils._log("Packages: ", self.packages)
 
         # get current filename
-        self.filename = self.window.active_view().file_name()
-        utils._log("Filename: ", self.filename)
+        active_view = self.window.active_view()
+        scope_name = active_view.scope_name(0)
 
+        self.filename = active_view.file_name()
         self.module = self._get_module(self.filename, base=None)
+
+        utils._log("Filename: ", self.filename)
         utils._log("Module: ", self.module)
 
     def _get_module(self, filename, base):
         """ Convert a filename to a "module" relative to the working path """
         if not filename or not filename.endswith('.py'):
             utils._log('Cannot get module for non python-source file: ', filename)
-            return ''  # only pytnon modules are supported
+            return ''  # only python modules are supported
         base = base or os.path.join(
             self.window.extract_variables().get('project_path', ''),
             self.window.extract_variables().get('project_base_name', ''))
+        base = os.path.abspath(base)
+        filename = os.path.abspath(filename)
         utils._log('Getting module for file %s relative to base %s' % (filename, base))
         if not filename.startswith(base):
             utils._log('Cannot determine module path outside of directory')
@@ -109,16 +114,6 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
 
         if self.class_name:
             self.old_class_name = self.class_name
-
-    def run(self, *args, **command_kwargs):
-        utils._log('TestPlier running in debug mode')
-        utils._log("Args: %s" % list(args))
-        utils._log("Kwargs: %s" % command_kwargs)
-        self.setup_runner()
-
-        kwargs = self._get_default_kwargs()
-        extra_args = command_kwargs.pop('extra_cmd_args', [])
-        kwargs.update(command_kwargs)
 
     def get_command_kwargs(self, **addl_kwargs):
         # prepare default command arguments
