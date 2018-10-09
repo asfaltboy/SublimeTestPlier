@@ -8,6 +8,7 @@ import sublime_plugin
 
 from . import utils
 
+last_valid_kwargs = {}
 
 class RunPythonTestsCommand(sublime_plugin.WindowCommand):
     external_runner = None
