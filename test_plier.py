@@ -10,22 +10,40 @@ from . import utils
 
 last_valid_kwargs = {}
 
+class NoTestFound(RuntimeError):
+    """
+        Throw when you are in a python file with no valid tests.
+    """
+    pass
+
+
+last_function_class_names = {}
+
+
 class RunPythonTestsCommand(sublime_plugin.WindowCommand):
     external_runner = None
 
     def __init__(self, window=None):
+        utils._log("Here on RunPythonTestsCommand constructor!")
+        self.window_id = window.id()
 
         if window:
+            utils._log("Here on RunPythonTestsCommand with window %s - id %s!" % (window, window.id()))
             super().__init__(window)
 
         else:
+            self.window = sublime.active_window()
             super().__init__()
 
         settings = sublime.load_settings("TestPlier.sublime-settings")
         self.run_last_valid_test = settings.get('run_last_valid_test', False)
 
-        self.old_func_name = ''
-        self.old_class_name = ''
+        if window.id() in last_function_class_names:
+            utils._log("Here on RunPythonTestsCommand, the attributes are: %s, %s" % last_function_class_names[self.window_id])
+
+        else:
+            utils._log("Here on RunPythonTestsCommand DOES NOT HAVE THE ATTRIBUTES")
+            last_function_class_names[self.window_id] = ('', '')
 
     def setup_runner(self):
         self.settings = sublime.load_settings("TestPlier.sublime-settings")
@@ -87,27 +105,35 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         pattern = view and utils.get_test(view, use_python=python_exec)
         utils._log('Test pattern: ', pattern)
         self.class_name, self.func_name = pattern
+        utils._log('self.func_name: %s, self.class_name: %s' % (self.func_name, self.class_name))
 
         if not self.class_name and not self.func_name:
+            old_func_name, old_class_name = last_function_class_names[self.window_id]
 
-            if not self.old_func_name and not self.old_class_name:
+            if not old_func_name and not old_class_name:
                 self.class_name = self.func_name = None
-                return
+                utils._log("Raising NoTestFound()")
+                raise NoTestFound()
 
         if self.run_last_valid_test:
             self.get_last_test()
 
     def get_last_test(self):
+        old_func_name, old_class_name = last_function_class_names[self.window_id]
+        utils._log('get_last_test, self.func_name: %s, self.class_name: %s' % (self.func_name, self.class_name))
+        utils._log('get_last_test, old_func_name: %s, old_class_name: %s' % (old_func_name, old_class_name))
 
         if not self.func_name or self.func_name and not self.func_name.lower().startswith( 'test_' ):
-            self.func_name = self.old_func_name
-            self.class_name = self.old_class_name
+            self.func_name = old_func_name
+            self.class_name = old_class_name
 
         if self.func_name:
-            self.old_func_name = self.func_name
+            old_func_name = self.func_name
 
         if self.class_name:
-            self.old_class_name = self.class_name
+            old_class_name = self.class_name
+
+        last_function_class_names[self.window_id] = (old_func_name, old_class_name)
 
     def get_command_kwargs(self, **addl_kwargs):
         # prepare default command arguments
@@ -134,6 +160,7 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         default_python = self.settings.get('python_executable', None)
         python_executable = kwargs.pop('python_executable', None) or default_python
         self.get_pattern(view, python_exec=python_executable)
+        utils._log('self.func_name: %s, self.class_name: %s' % (self.func_name, self.class_name))
 
         fmt_args = dict(
             module=self.module or '',
@@ -145,6 +172,8 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         if selection:
             fmt_args['selection'] = selection
 
+        utils._log('kwargs: %s' %(kwargs))
+        utils._log('fmt_args: %s' %(fmt_args))
         kwargs['cmd'] = self._format_placeholder(
             kwargs['cmd'], kwargs.pop('sep_cleanup'), **fmt_args)
 
@@ -210,8 +239,12 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         if scope_name.startswith( "source.python" ):
             self.setup_runner()
 
-            kwargs = self.get_command_kwargs(**command_kwargs)
-            last_valid_kwargs = kwargs
+            try:
+                kwargs = self.get_command_kwargs(**command_kwargs)
+                last_valid_kwargs = kwargs
+
+            except NoTestFound:
+                kwargs = last_valid_kwargs
 
         else:
             kwargs = last_valid_kwargs

@@ -84,7 +84,7 @@ def get_test(view, use_python=None):
     line, col = view.rowcol(int(r.a))
     line = line + 1
     assert line, ('No line found in region: %s' % r)
-    _log('Position in code -> line %s' % line)
+    _log('Position in code -> line %s, use_python: %s' % (line, use_python))
 
     if use_python:
         filename = view.file_name()
