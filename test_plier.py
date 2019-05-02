@@ -192,7 +192,6 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         if kwargs.get('external', self.external_runner):
             kwargs['external'] = kwargs.get('external', self.external_runner)
 
-        utils._log("Built command: ", kwargs)
         return kwargs
 
     def get_external_command(self, external, kwargs):
