@@ -77,12 +77,15 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
             return ''
         return filename.replace(base, '').replace(os.path.sep, '.')[:-3].strip('.')
 
-    def _get_default_kwargs(self):
-        kwargs = {
-            'cmd': self.default_cmd,
-            # trim the following string in-between interpolated parts
-            'sep_cleanup': '::',
-        }
+    def _get_default_kwargs(self, addl_kwargs):
+        if 'shell_cmd' in addl_kwargs:
+            kwargs = {}
+        else:
+            kwargs = {
+                'cmd': self.default_cmd,
+                # trim the following string in-between interpolated parts
+                'sep_cleanup': '::',
+            }
         if self.is_to_use_ansiescape:
             kwargs['syntax'] = "Packages/ANSIescape/ANSI.tmLanguage"
         return kwargs
@@ -137,10 +140,11 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
 
     def get_command_kwargs(self, **addl_kwargs):
         # prepare default command arguments
-        kwargs = deepcopy(self._get_default_kwargs())
+        kwargs = deepcopy(self._get_default_kwargs(addl_kwargs))
         extra_args = kwargs.pop('extra_cmd_args', [])
         kwargs.update(addl_kwargs)
-        kwargs['cmd'].extend(extra_args)
+        kwargs.get('cmd', []).extend(extra_args)
+        if 'shell_cmd' in kwargs: kwargs['shell_cmd'] = kwargs['shell_cmd'] + " ".join(extra_args)
 
         # get the command environment
         # TODO: infer from settings.python_interpreter and settings.src_root settings
@@ -174,8 +178,15 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
 
         utils._log('kwargs: %s' %(kwargs))
         utils._log('fmt_args: %s' %(fmt_args))
-        kwargs['cmd'] = self._format_placeholder(
-            kwargs['cmd'], kwargs.pop('sep_cleanup'), **fmt_args)
+
+        sep_cleanup = kwargs.pop('sep_cleanup') if 'sep_cleanup' in kwargs else '::'
+        if 'cmd' in kwargs:
+            kwargs['cmd'] = self._format_placeholder(
+                    kwargs['cmd'], sep_cleanup, **fmt_args)
+
+        if 'shell_cmd' in kwargs:
+            kwargs['shell_cmd'] = self._format_placeholder(
+                    [kwargs['shell_cmd']], sep_cleanup, **fmt_args)[0]
 
         # default external command can be used if not given
         if kwargs.get('external', self.external_runner):
