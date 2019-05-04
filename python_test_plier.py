@@ -13,7 +13,11 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
     external_runner = None
 
     def ansi_installed(self):
-        return 'sublimeansi' in list(map(str.lower, self.packages))
+        sublimeansi_installed = (
+            'sublimeansi' in self.packages or 'ansiescape' in self.packages
+        )
+        utils._log('SublimeANSI installed: %s' % sublimeansi_installed)
+        return sublimeansi_installed
 
     def setup_runner(self):
         self.settings = sublime.load_settings("SublimeTestPlier.sublime-settings")
@@ -21,8 +25,15 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         self.default_cmd = self.settings.get('default_cmd')
         utils._log("Default CMD: ", self.default_cmd)
 
-        self.packages = os.listdir(self.window.extract_variables().get(
-            'packages'))
+        installed_packages = [
+            filename.split('.')[0]
+            for filename
+            in os.listdir(sublime.installed_packages_path())
+        ]
+        local_packages = os.listdir(sublime.packages_path())
+        self.packages = set(
+            package.lower() for package in installed_packages + local_packages
+        )
         utils._log("Packages: ", self.packages)
 
         # get current filename
