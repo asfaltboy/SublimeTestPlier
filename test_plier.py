@@ -259,18 +259,16 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         else:
             kwargs = last_valid_kwargs
 
+        utils._log('\n')
         if 'external' in kwargs:
             cmd = self.get_external_command(kwargs['external'], kwargs)
-            utils._log('\n')
             utils._log('Running external runner with cmd: %s' % kwargs)
             return self.window.run_command("exec", {'cmd': cmd})
 
         elif self.is_to_use_ansiescape:
-            utils._log('\n')
             utils._log('Running internal command (with ANSI colors): %s' % kwargs)
             return self.window.run_command("ansi_color_build", kwargs)
 
         else:
-            utils._log('\n')
             utils._log('Running internal command (without ANSI colors): %s' % kwargs)
             return self.window.run_command("exec", kwargs)
