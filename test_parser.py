@@ -29,6 +29,8 @@ class TestParser(ast.NodeVisitor):
     Note: currently if row is below last class/function and unindented it is
           still considered inside the last detected class/function.
 
+    # TODO: move to a separate test module
+
     >>> from os import path
     >>> TEST_DIR = path.join(path.abspath(path.dirname(__file__)), 'tests')
     >>> module_source = open(path.join(TEST_DIR, '_fixture.py')).read()

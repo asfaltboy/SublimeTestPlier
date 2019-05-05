@@ -57,21 +57,26 @@ def settings_loader(settings_file):
     return settings
 
 
-window_variables = {
-    'packages': packages,
-}
 command_runner = mock.Mock(side_effect=run_command)
 view = mock.Mock(run_command=command_runner, _buffer=_buffer)
-window = mock.Mock(new_file=mock.Mock(return_value=view),
-                   run_command=command_runner,
-                   extract_variables=mock.Mock(return_value=window_variables),
-                   active_view=mock.Mock(return_value=view))
-sublime = mock.Mock(active_window=mock.Mock(return_value=window),
-                    load_settings=mock.Mock(side_effect=settings_loader),
-                    save_settings=mock.Mock(side_effect=settings_loader))
+window = mock.Mock(
+    active_view=mock.Mock(return_value=view),
+    extract_variables=mock.Mock(return_value={}),
+    new_file=mock.Mock(return_value=view),
+    run_command=command_runner,
+)
+sublime = mock.Mock(
+    active_window=mock.Mock(return_value=window),
+    load_settings=mock.Mock(side_effect=settings_loader),
+    save_settings=mock.Mock(side_effect=settings_loader),
+    packages_path=mock.Mock(return_value=packages),
+    installed_packages_path=mock.Mock(return_value=packages),
+)
 
-WindowCommand = type(object.__name__, (mock.MagicMock,),
-                     dict(object.__dict__, window=window))
+WindowCommand = type(
+    object.__name__, (mock.MagicMock,),
+    dict(object.__dict__, window=window)
+)
 sublime_plugin = mock.MagicMock(WindowCommand=WindowCommand)
 
 sys.modules['sublime'] = sublime
