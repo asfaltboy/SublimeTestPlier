@@ -39,7 +39,7 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         self.run_last_valid_test = settings.get('run_last_valid_test', False)
 
         if window.id() in last_function_class_names:
-            utils._log("Here on RunPythonTestsCommand, the attributes are: %s, %s" % last_function_class_names[self.window_id])
+            utils._log("Here on RunPythonTestsCommand, the attributes are: %s" % str(last_function_class_names[self.window_id]))
 
         else:
             utils._log("Here on RunPythonTestsCommand DOES NOT HAVE THE ATTRIBUTES")
