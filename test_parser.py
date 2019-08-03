@@ -16,6 +16,9 @@ from __future__ import print_function
 import ast
 import sys
 
+from debug_tools import getLogger
+log = getLogger( 1, __name__ )
+
 
 class TestParser(ast.NodeVisitor):
     """
@@ -87,8 +90,8 @@ class TestParser(ast.NodeVisitor):
     def __init__(self, source, debug=False, ignore_bases=None):
         self.source = source
         self.ignore_bases = ignore_bases or []
-        self.debug = debug
-        self._log("Parsing source: ", self.source[:10],
+        log.debug_level = 3 if debug else 1
+        log(2, "Parsing source: ", self.source[:10],
                   '...', self.source[-10:])
 
     def _log(self, *args):
@@ -111,15 +114,15 @@ class TestParser(ast.NodeVisitor):
     def should_stop(self, node):
         assert self.lineno, 'line number required'
         if node.lineno > self.lineno:
-            self._log("Stop parsing node lineno %s / our lineno %s" % (
+            log(2, "Stop parsing node lineno %s / our lineno %s" % (
                 node.lineno, self.lineno))
             return True
 
     def ignore_class(self, node):
         if not hasattr(node, 'bases'):
-            self._log("Class %s has no bases (not a class?)" % node)
+            log(2, "Class %s has no bases (not a class?)" % node)
             return False
-        self._log("Ignore if bases %s are in %s" %
+        log(2, "Ignore if bases %s are in %s" %
                   (node.bases, self.ignore_bases))
 
         def should_ignore(base):
@@ -135,7 +138,7 @@ class TestParser(ast.NodeVisitor):
         Test whether node is inside a class definition.
         Test ignores classes whose base is in self.ignore_bases.
         """
-        self._log("Testing if node %s is inside a class" % node)
+        log(2, "Testing if node %s is inside a class" % node)
         return (
             # verify none of the bases are in ignored bases
             not self.ignore_class(node) and
@@ -149,29 +152,29 @@ class TestParser(ast.NodeVisitor):
 
     def first_argument_is_self(self, node):
         if not node.args.args:
-            self._log("No arguments: ", vars(node.args))
+            log(2, "No arguments: ", vars(node.args))
             return False
         first_arg = node.args.args[0]
-        self._log("First argument is ", first_arg)
+        log(2, "First argument is ", first_arg)
         arg_name = getattr(first_arg, 'arg', getattr(first_arg, 'id', None))
-        self._log("Argument Name: ", arg_name)
+        log(2, "Argument Name: ", arg_name)
         return arg_name == 'self'
 
     def is_method(self, node):
         if not self.inside_class(node):
-            self._log("Not inside class: ", vars(node))
+            log(2, "Not inside class: ", vars(node))
             return False
         if self.nested_class and node.col_offset > self.nested_class.col_offset:
-            self._log("Method is inside a nested class definition, skipping")
+            log(2, "Method is inside a nested class definition, skipping")
             return False
         return self.first_argument_is_self(node)
 
     def visit_ClassDef(self, node):
-        self._log('line: ', (node.lineno))
+        log(2, 'line: ', (node.lineno))
         if self.should_stop(node):
             return
         elif self.inside_class(node):
-            self._log("Skip inside nested class: ", vars(node))
+            log(2, "Skip inside nested class: ", vars(node))
             self.nested_class = node
             # ignore nested classes
             return self.generic_visit(node)
@@ -188,15 +191,15 @@ class TestParser(ast.NodeVisitor):
         return self.generic_visit(node)
 
     def visit_FunctionDef(self, node):
-        self._log('line: ', (node.lineno))
+        log(2, 'line: ', (node.lineno))
         if self.should_stop(node):
             return
         elif self.is_method(node):
-            self._log("Method found: ", vars(node))
+            log(2, "Method found: ", vars(node))
             self.nearest_func = node  # set method
             self.nearest_ignored = None
         elif not self.inside_class(node) and not self.nearest_ignored:
-            self._log("Function found: ", vars(node))
+            log(2, "Function found: ", vars(node))
             self.nearest_class = None
             self.nearest_func = node
         return self.generic_visit(node)

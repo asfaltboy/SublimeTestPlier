@@ -7,8 +7,11 @@ import os
 import subprocess
 
 import sublime
+from debug_tools import getLogger
 
 from .. import test_parser
+
+log = getLogger( 1, __name__ )
 
 
 def DEBUG(value=None):
@@ -20,24 +23,6 @@ def DEBUG(value=None):
     settings = sublime.save_settings("TestPlier.sublime-settings")
 
 
-def _log(*args, **kwargs):
-    """
-    >>> DEBUG()
-    False
-    >>> _log("Test")
-
-    >>> _log("Test", debug=True)
-    Test
-
-    >>> DEBUG(value=True)
-    >>> _log("Test")
-    Test
-    """
-    if not kwargs.get('debug', DEBUG()):
-        return
-    print(*args)
-
-
 def get_first_selection(view):
     view.settings().set('__vi_external_disable', True)
     selection = list(view.sel())
@@ -46,7 +31,7 @@ def get_first_selection(view):
         # cursor not in view
         return None
 
-    _log("Selection: %s" % selection)
+    log(2, "Selection: %s" % selection)
 
     # get first selection region
     return selection[0]
@@ -56,9 +41,9 @@ def get_selection_content(view):
     # return selected region as string if non-empty
     r = get_first_selection(view)
     selected_string = view.substr(r)
-    _log("selected string: ", selected_string)
+    log(2, "selected string: ", selected_string)
     if selected_string.strip():
-        _log("Selection: %s (%s)" % (selected_string, r))
+        log(2, "Selection: %s (%s)" % (selected_string, r))
         return selected_string
 
 
@@ -75,16 +60,16 @@ def get_test(view, use_python=None):
     """
     r = get_first_selection(view)
     if r is None:
-        _log("No selection found: ", r)
+        log(2, "No selection found: ", r)
         return
 
     # try to detect if r is inside class/method
     source = view.substr(sublime.Region(0, view.size()))
-    # _log("source is: ", source)
+    # log(2, "source is: ", source)
     line, col = view.rowcol(int(r.a))
     line = line + 1
     assert line, ('No line found in region: %s' % r)
-    _log('Position in code -> line %s, use_python: %s' % (line, use_python))
+    log(2, 'Position in code -> line %s, use_python: %s' % (line, use_python))
 
     if use_python:
         filename = view.file_name()
@@ -93,7 +78,7 @@ def get_test(view, use_python=None):
     else:
         parser = test_parser.TestParser(source, debug=DEBUG(), ignore_bases=['object'])
         class_name, method_name = parser.parse(line)
-    _log('Found class/name: %s/%s' % (class_name, method_name))
+    log(2, 'Found class/name: %s/%s' % (class_name, method_name))
     return class_name, method_name
 
 
