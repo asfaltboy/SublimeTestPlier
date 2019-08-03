@@ -239,12 +239,20 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
             self.is_to_use_ansiescape = False
         utils._log("is_to_use_ansiescape:", self.is_to_use_ansiescape)
 
+    def _update_kwards(self, new_kwargs, original_kwargs):
+
+        for original, value in original_kwargs.items():
+
+            if original not in ('cmd', 'shell_cmd'):
+                new_kwargs[original] = original_kwargs[original]
+
     def run(self, *args, **command_kwargs):
         utils._log('SublimeTestPlier running in debug mode')
         utils._log("Args: %s" % list(args))
         utils._log("Kwargs: %s" % command_kwargs)
 
         global last_valid_kwargs
+        original_kwargs = dict( command_kwargs )
         self.setup_ansiescape( command_kwargs )
 
         active_view = self.window.active_view()
@@ -254,25 +262,27 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
             self.setup_runner()
 
             try:
-                kwargs = self.get_command_kwargs(**command_kwargs)
-                last_valid_kwargs = kwargs
+                new_kwargs = self.get_command_kwargs(**command_kwargs)
+                last_valid_kwargs = new_kwargs
 
             except NoTestFound:
-                kwargs = last_valid_kwargs
+                new_kwargs = last_valid_kwargs
 
         else:
-            kwargs = last_valid_kwargs
+            new_kwargs = last_valid_kwargs
+
+        self._update_kwards( new_kwargs, original_kwargs )
 
         utils._log('\n')
-        if 'external' in kwargs:
-            cmd = self.get_external_command(kwargs['external'], kwargs)
-            utils._log('Running external runner with cmd: %s' % kwargs)
+        if 'external' in new_kwargs:
+            cmd = self.get_external_command(new_kwargs['external'], new_kwargs)
+            utils._log('Running external runner with cmd: %s' % new_kwargs)
             return self.window.run_command("exec", {'cmd': cmd})
 
         elif self.is_to_use_ansiescape:
-            utils._log('Running internal command (with ANSI colors): %s' % kwargs)
-            return self.window.run_command("ansi_color_build", kwargs)
+            utils._log('Running internal command (with ANSI colors): %s' % new_kwargs)
+            return self.window.run_command("ansi_color_build", new_kwargs)
 
         else:
-            utils._log('Running internal command (without ANSI colors): %s' % kwargs)
-            return self.window.run_command("exec", kwargs)
+            utils._log('Running internal command (without ANSI colors): %s' % new_kwargs)
+            return self.window.run_command("exec", new_kwargs)
