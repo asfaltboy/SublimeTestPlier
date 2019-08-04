@@ -11,7 +11,7 @@ from debug_tools import getLogger
 
 from .. import test_parser
 
-log = getLogger( 1, __name__ )
+log = getLogger( 1, __name__, trimname=__package__ )
 
 
 def DEBUG(value=None):

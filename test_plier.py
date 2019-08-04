@@ -9,7 +9,7 @@ import sublime_plugin
 from debug_tools import getLogger
 
 from . import utils
-log = getLogger( 1, __name__ )
+log = getLogger( 1, __name__, trimname=__package__ )
 
 g_last_valid_kwargs = {}
 g_last_function_class_names = {}

@@ -17,7 +17,7 @@ import ast
 import sys
 
 from debug_tools import getLogger
-log = getLogger( 1, __name__ )
+log = getLogger( 1, __name__, trimname=__package__ )
 
 
 class TestParser(ast.NodeVisitor):
