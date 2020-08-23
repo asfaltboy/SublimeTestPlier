@@ -1,8 +1,16 @@
-language: python
+matrix:
+    include:
+        - name: Linux
+          os: linux
+          language: python
+        - name: OSX
+          os: osx
+          osx_image: xcode11.2
+          language: generic  # 'python' is an error on travis MacOS
 
-python: "3.3.6"
 install:
-  - pip install -r test-reqs.txt
+  - pip3 install --upgrade pip
+  - pip3 install -r test-reqs.txt
 script:
   - pytest -vv --flake8 --cov=./
 after_success:
