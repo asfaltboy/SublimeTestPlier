@@ -8,6 +8,10 @@ import sublime_plugin
 
 from . import utils
 
+MYPY = False
+if MYPY:
+    from typing import Optional
+
 
 class RunPythonTestsCommand(sublime_plugin.WindowCommand):
     external_runner = None
@@ -89,6 +93,23 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
             return
         self.class_name, self.func_name = pattern
 
+    def find_venv_root(self, filename):
+        # type: (str) -> Optional[str]
+        dirname = os.path.dirname(os.path.abspath(filename))
+        while dirname != '/':
+            if '.venv' in os.listdir(dirname):
+                venv_file = os.path.join(dirname, '.venv')
+                with open(venv_file) as f:
+                    venv = f.read().strip()
+                utils._log("Venv found '%s' checking path" % venv)
+                venv_path = os.path.expanduser('~/.virtualenvs/%s' % venv)
+                if os.path.exists(venv_path):
+                    utils._log("Venv path exists at '%s'" % venv_path)
+                    return venv_path
+                utils._log("Venv path does not exist at '%s'" % venv_path)
+            dirname = os.path.dirname(dirname)
+        return None
+
     def get_command_kwargs(self, **addl_kwargs):
         # prepare default command arguments
         kwargs = deepcopy(self._get_default_kwargs())
@@ -101,6 +122,16 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         #       as used in https://github.com/JulianEberius/SublimePythonIDE
         if 'env' not in kwargs:
             kwargs['env'] = {}
+        if 'PATH' not in kwargs['env']:
+            # add .venv path if it exists
+            venv_path = self.find_venv_root(self.filename)
+            if venv_path:
+                venv_bin_path = '%s/bin' % venv_path
+                kwargs['env']['PATH'] = venv_bin_path
+        # merge path with Sublime's env PATH
+        kwargs['env']['PATH'] = '%s:%s' % (kwargs['env']['PATH'], os.environ["PATH"])
+        utils._log("Current PATH is %s" % os.getenv("PATH"))
+
         if 'working_dir' in kwargs:
             self.module = self._get_module(self.filename, base=kwargs['working_dir'])
             utils._log("Module updated: ", self.module)
