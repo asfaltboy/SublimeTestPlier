@@ -43,6 +43,8 @@ If you add your own terminal/os don't forget to submit a pull-request :) !
 
 ## Configuration
 
+### Test Command
+
 By default the command we run is `pytest {filename}::{test_class}::{test_func} -k {selection} --doctest-modules -v`.
 Let us look at the substitute arguments with more detail:
 
@@ -58,7 +60,25 @@ Placeholder arguments are optional, and will be cleanly removed where possible:
 
 You may customize the command and any of it's parameters (all optional) in your `project.sublime-project` settings.
 
+### Build arguments
+
+When setting up your build system, you may specify additional arguments:
+
+| argument | description |
+| --- | --- |
+| *cmd* | list of cmd line arguments as described in the above section |
+| *env* | key/value pair of ENV_VARIABLE: "value" to be passed to the process |
+| *extra_cmd_args* | extra arguments to add to the default command |
+| *working_dir* | set the working dir (reqiored to import the currently run module) |
+| *python_executable* | absolute path to a python executable, to run module parsing (AST) with, rather than the built-in python version (which is limited to 3.3 as of Sublime Text 3 build 3124, and through 7/2019) |
+| *sep_cleanup* | override the default seperator ("::") to strip inbetween interpolated parts. |
+| *syntax* | syntax file to use for styling the build result panel |
+| *external* | set to `true` to run the default external command (a python script that launches the test in existing or new iterm window); can be a list of arguments to launch custom commands (see `get_default_command()` function in [`utils/__init__.py`](https://github.com/asfaltboy/SublimeTestPlier/blob/8e86faa466744b2328070bc697306eb724b4ff44/utils/__init__.py#L100) for an example, and the [relevant section above](#launching-an-external-terminal-window)) |
+
+
 **IMPORTANT:** The only required argument of the build system is the **target**. It _must_ be set to `run_python_tests` command, in order to execute build with SublimeTestPlier's command.
+
+### Examples
 
 For example Django's test runner can be run like so:
 
