@@ -129,7 +129,7 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
                 venv_bin_path = '%s/bin' % venv_path
                 kwargs['env']['PATH'] = venv_bin_path
         # merge path with Sublime's env PATH
-        kwargs['env']['PATH'] = '%s:%s' % (kwargs['env']['PATH'], os.environ["PATH"])
+        kwargs['env']['PATH'] = '%s:%s' % (kwargs['env'].get('PATH', ''), os.environ["PATH"])
         utils._log("Current PATH is %s" % os.getenv("PATH"))
 
         if 'working_dir' in kwargs:
