@@ -1,12 +1,12 @@
 matrix:
-    include:
-        - name: Linux
-          os: linux
-          language: python
-        - name: OSX
-          os: osx
-          osx_image: xcode11.2
-          language: generic  # 'python' is an error on travis MacOS
+  include:
+    - name: Linux
+      os: linux
+      language: python
+    - name: OSX
+      os: osx
+      osx_image: xcode11.2
+      language: generic  # 'python' is an error on travis MacOS
 
 install:
   - pip3 install --upgrade pip
