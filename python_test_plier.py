@@ -15,6 +15,13 @@ if MYPY:
 
 class RunPythonTestsCommand(sublime_plugin.WindowCommand):
     external_runner = None
+    _settings = None
+
+    @property
+    def settings(self):
+        if self._settings is None:
+            self._settings = sublime.load_settings("SublimeTestPlier.sublime-settings")
+        return self._settings
 
     def ansi_installed(self):
         sublimeansi_installed = (
@@ -24,7 +31,6 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
         return sublimeansi_installed
 
     def setup_runner(self):
-        self.settings = sublime.load_settings("SublimeTestPlier.sublime-settings")
         utils._log("Settings: ", vars(self.settings))
         self.default_cmd = self.settings.get('default_cmd')
         utils._log("Default CMD: ", self.default_cmd)
