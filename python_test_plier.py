@@ -10,7 +10,7 @@ from . import utils
 
 MYPY = False
 if MYPY:
-    from typing import Optional
+    from typing import Optional  # noqa: F401
 
 
 class RunPythonTestsCommand(sublime_plugin.WindowCommand):
