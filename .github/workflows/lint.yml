@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  merge_group:
+
+jobs:
+  check-messages:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: kaste/upgrade-messages-test-action@v1
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: chartboost/ruff-action@v1
+
+  mypy:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: ['linux', 'darwin', 'win32']
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.8'
+    - name: Install mypy
+      run: |
+        pip install mypy
+    - name: Check with mypy
+      run: |
+        mypy python_test_plier.py --platform=${{ matrix.platform }}
