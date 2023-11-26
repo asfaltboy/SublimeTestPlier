@@ -1,6 +1,14 @@
 [
    {
-      "caption": "Run Python Tests",
+      "caption": "SublimeTestPlier: Run python tests",
       "command": "run_python_tests"
+   },
+   {
+      "caption": "SublimeTestPlier: Settings",
+      "command": "edit_settings",
+      "args": {
+         "base_file": "${packages}/SublimeTestPlier/SublimeTestPlier.sublime-settings",
+         "default": "{\n$0\n}\n"
+      }
    }
 ]
