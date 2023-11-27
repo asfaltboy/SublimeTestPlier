@@ -17,7 +17,7 @@ def DEBUG(value=None):
         return settings.get('debug', False)
 
     settings['debug'] = value
-    settings = sublime.save_settings("SublimeTestPlier.sublime-settings")
+    sublime.save_settings("SublimeTestPlier.sublime-settings")
 
 
 def _log(*args, **kwargs):

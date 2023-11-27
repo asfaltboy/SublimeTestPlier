@@ -8,23 +8,24 @@ _buffer = None
 
 def insert_to_buffer(obj):
     global _buffer
-    _buffer = (_buffer or '') + obj['characters']
+    _buffer = (_buffer or "") + obj["characters"]
 
 
 packages = path.abspath(path.dirname(__file__))
 known_commands = {
-    'insert': insert_to_buffer,
+    "insert": insert_to_buffer,
 }
 
 
 def run_command(name, *args, **kwargs):
     assert name in known_commands, (
-        '%s command not found. You need to import packages you need for your '
-        'tests (or Mock them) and add them to `sublime_mock.known_commands`'
-        ' dict') % name
+        "%s command not found. You need to import packages you need for your "
+        "tests (or Mock them) and add them to `sublime_mock.known_commands`"
+        " dict"
+    ) % name
     cmd = known_commands[name]
     if isinstance(cmd, type):
-        print("Running command ", name, cmd.run)
+        print("Running command ", name, cmd.run)  # type: ignore
         return cmd().run(*args, **kwargs)
     print("Running function ", name, cmd)
     return cmd(*args, **kwargs)
@@ -34,24 +35,30 @@ settings = None
 
 
 def settings_loader(settings_file):
-    """ Implicitly saves settings as a global fake dict """
+    """Implicitly saves settings as a global fake dict"""
     global settings
     if settings is None:
         settings = mock.MagicMock(spec_set=dict)
-        assert settings_file == 'SublimeTestPlier.sublime-settings'
-        settings_file_path = path.join(path.abspath(path.dirname(path.dirname(__file__))), settings_file)
-        assert path.exists(settings_file_path), 'Invalid settings file %s' % settings_file_path
+        assert settings_file == "SublimeTestPlier.sublime-settings"
+        settings_file_path = path.join(
+            path.abspath(path.dirname(path.dirname(__file__))), settings_file
+        )
+        assert path.exists(settings_file_path), (
+            "Invalid settings file %s" % settings_file_path
+        )
         with open(settings_file_path) as f:
             data = json.load(f)
             # settings.update(data)
 
         def getitem(name, default=None):
             return data.get(name, default)
+
         settings.__getitem__.side_effect = getitem
         settings.get.side_effect = getitem
 
         def setitem(name, val):
             data[name] = val
+
         settings.__setitem__.side_effect = setitem
 
     return settings
@@ -74,10 +81,9 @@ sublime = mock.Mock(
 )
 
 WindowCommand = type(
-    object.__name__, (mock.MagicMock,),
-    dict(object.__dict__, window=window)
+    object.__name__, (mock.MagicMock,), dict(object.__dict__, window=window)
 )
 sublime_plugin = mock.MagicMock(WindowCommand=WindowCommand)
 
-sys.modules['sublime'] = sublime
-sys.modules['sublime_plugin'] = sublime_plugin
+sys.modules["sublime"] = sublime
+sys.modules["sublime_plugin"] = sublime_plugin
