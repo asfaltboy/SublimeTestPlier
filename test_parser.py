@@ -15,6 +15,7 @@ Example:
 from __future__ import print_function
 import ast
 import sys
+from typing import Optional
 
 
 class TestParser(ast.NodeVisitor):
@@ -84,7 +85,7 @@ class TestParser(ast.NodeVisitor):
     >>> parser.parse(line=2)
     (None, 'test_first')
     """
-    nested_class = None
+    nested_class: Optional[ast.ClassDef] = None
 
     def __init__(self, source, debug=False, ignore_bases=None):
         self.source = source

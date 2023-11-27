@@ -1,12 +1,18 @@
+# type: ignore
 from mymodule.tests import TestClass
+
+
 def test_first():
     pass
+
+
 class AnotherClass(object):
     def test_method(self):
         pass
 
 
- # test something
+# test something
+
 
 class SomeTest(TestClass):
     class_property = True
@@ -40,12 +46,11 @@ class AnotherIgnoredClass(object):
 
 @test_first
 class DecoratedTestClass(TestClass):
-
     @test_first
     def test_me(self):
         pass
 
 
-class ParentInModuleClass(mymodule.TestClass):
+class ParentInModuleClass(mymodule.TestClass):  # noqa: F821
     def test_me(self):
         pass
