@@ -1,5 +1,7 @@
 # Sublime Test Plier
 
+[![CI](https://github.com/asfaltboy/SublimeTestPlier/actions/workflows/ci.yml/badge.svg)](https://github.com/asfaltboy/SublimeTestPlier/actions/workflows/ci.yml)
+
 | Master                  | Develop                 |
 |:------------------------|:------------------------|
 | [![Build Status][2]][1] | [![Build Status][3]][1] |
