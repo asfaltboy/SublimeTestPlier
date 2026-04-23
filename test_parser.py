@@ -112,7 +112,10 @@ class TestParser(ast.NodeVisitor):
 
     def should_stop(self, node):
         assert self.lineno, 'line number required'
-        if node.lineno > self.lineno:
+        first_lineno = node.lineno
+        if getattr(node, 'decorator_list', None):
+            first_lineno = node.decorator_list[0].lineno
+        if first_lineno > self.lineno:
             self._log("Stop parsing node lineno %s / our lineno %s" % (
                 node.lineno, self.lineno))
             return True
