@@ -1,11 +1,7 @@
 # Sublime Test Plier
 
 [![CI](https://github.com/asfaltboy/SublimeTestPlier/actions/workflows/ci.yml/badge.svg)](https://github.com/asfaltboy/SublimeTestPlier/actions/workflows/ci.yml)
-
-| Master                  | Develop                 |
-|:------------------------|:------------------------|
-| [![Build Status][2]][1] | [![Build Status][3]][1] |
-| [![codecov][13]][11]    | [![codecov][14]][12]    |
+[![codecov](https://codecov.io/gh/asfaltboy/SublimeTestPlier/graph/badge.svg)](https://codecov.io/gh/asfaltboy/SublimeTestPlier)
 
 This [Sublime Text 3 (only)][4] plugin allows python developers to run (a single or  more) tests quickly from within a project environment.
 
@@ -143,9 +139,6 @@ This plugin supports passing the command through [SublimeANSI][8] to display ANS
 
 Please refer to the [contributing documentation][10]
 
-[1]: https://travis-ci.org/asfaltboy/SublimeTestPlier
-[2]: https://travis-ci.org/asfaltboy/SublimeTestPlier.svg?branch=master
-[3]: https://travis-ci.org/asfaltboy/SublimeTestPlier.svg?branch=develop
 [4]: http://www.sublimetext.com/3
 [5]: https://packagecontrol.io/search/test+python
 [6]: test_parser.py
@@ -153,7 +146,3 @@ Please refer to the [contributing documentation][10]
 [8]: https://github.com/aziz/SublimeANSI
 [9]: https://www.iterm2.com/
 [10]: CONTRIBUTING.md
-[11]: https://codecov.io/gh/asfaltboy/SublimeTestPlier?branch=master
-[12]: https://codecov.io/gh/asfaltboy/SublimeTestPlier?branch=develop
-[13]: https://codecov.io/gh/asfaltboy/SublimeTestPlier/branch/master/graph/badge.svg
-[14]: https://codecov.io/gh/asfaltboy/SublimeTestPlier/branch/develop/graph/badge.svg
