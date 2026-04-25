@@ -2,6 +2,8 @@ name: CI
 
 on:
   push:
+    branches:
+      - develop
   pull_request:
 
 jobs:
@@ -22,7 +24,5 @@ jobs:
           python -m pip install -r test-reqs.txt
       - name: Lint and test
         run: pytest -vv --flake8 --cov=./
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
