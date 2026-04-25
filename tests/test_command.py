@@ -1,4 +1,5 @@
 from unittest import TestCase, mock
+import os
 import sys
 
 from .sublime_mock import sublime, known_commands
@@ -43,6 +44,9 @@ class TestPlierCommand(TestCase):
         self.debug_patcher = mock.patch.object(utils, 'DEBUG', return_value=True)
         self.debug_patcher.start()
         self.addCleanup(self.debug_patcher.stop)
+        self.path_patcher = mock.patch.dict(os.environ, {'PATH': ''})
+        self.path_patcher.start()
+        self.addCleanup(self.path_patcher.stop)
 
     def tearDown(self):
         exec_cmd.reset_mock()
@@ -109,7 +113,8 @@ class TestPlierCommand(TestCase):
         exec_cmd.assert_called_once_with(dict(
             working_dir='', env={}, cmd=['nosetests', '-k ']))
 
-    def test_custom_unittest_module_relative_to_project(self):
+    @mock.patch('os.listdir', return_value=[])
+    def test_custom_unittest_module_relative_to_project(self, listdir):
         self.view.file_name = mock.Mock(return_value='/SublimeTestPlier/tests/file.py')
         self.view.substr.return_value = self.mock_selection(2, 2)
         custom_kwargs = self.custom_kwargs.copy()
@@ -125,7 +130,8 @@ class TestPlierCommand(TestCase):
             working_dir='', env={},
             cmd=['unittest', 'tests.file.TestCase.test_fail', ]))
 
-    def test_custom_unittest_module_relative_to_working_dir(self):
+    @mock.patch('os.listdir', return_value=[])
+    def test_custom_unittest_module_relative_to_working_dir(self, listdir):
         self.view.file_name = mock.Mock(return_value='/SublimeTestPlier/tests/file.py')
         self.view.substr.return_value = self.mock_selection(2, 2)
         custom_kwargs = self.custom_kwargs.copy()

@@ -1,0 +1,4 @@
+[flake8]
+max-line-length = 110
+per-file-ignores =
+    tests/_fixture*:E501,E302,E303,E114,F821

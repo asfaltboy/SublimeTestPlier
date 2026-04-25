@@ -8,10 +8,6 @@ import sublime_plugin
 
 from . import utils
 
-MYPY = False
-if MYPY:
-    from typing import Optional
-
 
 class RunPythonTestsCommand(sublime_plugin.WindowCommand):
     external_runner = None
@@ -129,7 +125,10 @@ class RunPythonTestsCommand(sublime_plugin.WindowCommand):
                 venv_bin_path = '%s/bin' % venv_path
                 kwargs['env']['PATH'] = venv_bin_path
         # merge path with Sublime's env PATH
-        kwargs['env']['PATH'] = '%s:%s' % (kwargs['env'].get('PATH', ''), os.environ["PATH"])
+        os_path = os.environ.get("PATH", "")
+        combined_path = ':'.join(p for p in [kwargs['env'].get('PATH', ''), os_path] if p)
+        if combined_path:
+            kwargs['env']['PATH'] = combined_path
         utils._log("Current PATH is %s" % os.getenv("PATH"))
 
         if 'working_dir' in kwargs:
