@@ -22,7 +22,7 @@ def func_test():
     pass
 
 
-class ParentClass(AnotherClass):
+class ParentClassA(AnotherClass):
     class ChildClass:
         nested_property = True
 
@@ -48,4 +48,26 @@ class DecoratedTestClass(TestClass):
 
 class ParentInModuleClass(mymodule.TestClass):
     def test_me(self):
+        pass
+
+
+class ParentClassB(TestClass):
+    foo = 1
+
+    def test_foo(self):
+        pass
+
+    def test_a(self):
+        class ChildClass(object):
+            nested_property = True
+
+            def child_method(self):
+                pass
+
+            another_attribute = 'foo'
+
+        cl = ChildClass()
+        assert cl.nested_property
+
+    def test_b(self):
         pass

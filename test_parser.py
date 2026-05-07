@@ -63,14 +63,15 @@ class TestParser(ast.NodeVisitor):
     >>> list(set(map(parser.parse, (21, 22))))
     [(None, 'func_test')]
 
+    # nested classes are allowed
     >>> list(set(map(parser.parse, (25, 26, 27, 28, 31))))
-    [('ParentClass', None)]
+    [('ParentClassA', None)]
 
     >>> list(set(map(parser.parse, (29, 30))))
-    [('ParentClass', None)]
+    [('ParentClassA', None)]
 
     >>> list(set(map(parser.parse, (32, 33))))
-    [('ParentClass', 'parent_method')]
+    [('ParentClassA', 'parent_method')]
 
     # test decorated test case and decorated method
     >>> list(set(map(parser.parse, range(41, 44))))
@@ -83,6 +84,19 @@ class TestParser(ast.NodeVisitor):
     >>> parser = TestParser(source=module_source)
     >>> parser.parse(line=2)
     (None, 'test_first')
+
+    # classes defined in test are ignored
+    >>> list(set(map(parser.parse, (54, 55, 56))))
+    [('ParentClassB', None)]
+
+    >>> list(set(map(parser.parse, (57, 58))))
+    [('ParentClassB', 'test_foo')]
+
+    >>> list(set(map(parser.parse, (60, 61, 63, 67, 68, ))))
+    [('ParentClassB', 'test_a')]
+
+    >>> list(set(map(parser.parse, (70, 71))))
+    [('ParentClassB', 'test_b')]
     """
     nested_class = None
 
